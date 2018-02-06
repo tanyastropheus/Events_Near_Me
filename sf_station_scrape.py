@@ -12,7 +12,7 @@ page = requests.get(calendar)
 soup = BeautifulSoup(page.content, 'html.parser')
 events = []  # create a list of dicts where each event attributes are saved
 
-while soup.select('div#listingPagination > a')[-1].get_text() == 'Next »':
+while True:
     # grab all event names and links on the page
     event_names = [name.text for name in soup.find_all('a', class_='url summary')]
     event_links = [link.get('href') for link in soup.find_all('a', class_='url summary')]
@@ -23,22 +23,13 @@ while soup.select('div#listingPagination > a')[-1].get_text() == 'Next »':
         event['name'] = event_names[i]
         event['link'] = url + event_links[i]
 
-        '''
-        # grab event name & link from the each page
-        event['name'] = soup.find('a', class_='url summary').get_text()
-        event['link'] = url + soup.find('a', class_='url summary').get('href')
-        '''
-
         # following event link to get additional event info
         event_url = event['link']
-        event_page = requests.get(event_url)
+        event_page = requests.get(event_url)  # REVISIT: Optimize by using async framework (python-future)
         event_soup = BeautifulSoup(event_page.content, 'html.parser')
 
-        # REVISIT: This only grabs specified event attrs && doesn't take advantage
-        # of the flexibility of NoSQL DB
+        # REVISIT: This only grabs specified event attrs && doesn't take advantage of the flexibility of NoSQL DB
         # REVISIT: How to grab the blurb?
-        # REVISIT: How does the program behave when an event misses an attribute (e.g. cost)?
-        # REVISIT: What if an event is free?
         if event_soup.find('dt', text=re.compile(r'When')):
             date = re.match('^[^(]+', event_soup.find('dd').get_text())
             event['date'] = date.group(0).strip()
@@ -63,8 +54,11 @@ while soup.select('div#listingPagination > a')[-1].get_text() == 'Next »':
         events.append(event)
         i += 1
 
-    next_page = url + soup.select('div#listingPagination > a')[-1].get('href')
-    page = requests.get(next_page)
-    soup = BeautifulSoup(page.content, 'html.parser')
+    if soup.select('div#listingPagination > a')[-1].get_text() == 'Next »':
+        next_page = url + soup.select('div#listingPagination > a')[-1].get('href')
+        page = requests.get(next_page)
+        soup = BeautifulSoup(page.content, 'html.parser')
+    else:
+        break
 
 pprint(events)
