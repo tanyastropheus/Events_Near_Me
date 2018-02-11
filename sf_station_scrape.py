@@ -4,6 +4,7 @@
 import requests
 import re
 from bs4 import BeautifulSoup
+from elasticsearch import Elasticsearch
 from pprint import pprint  # REVISIT: for debugging purpose only.
 
 url = 'https://www.sfstation.com/'
@@ -29,6 +30,7 @@ while True:
         event_soup = BeautifulSoup(event_page.content, 'html.parser')
 
         # REVISIT: This only grabs specified event attrs && doesn't take advantage of the flexibility of NoSQL DB
+        # SOLUTION: include link to the event page
         # REVISIT: How to grab the blurb?
         if event_soup.find('dt', text=re.compile(r'When')):
             date = re.match('^[^(]+', event_soup.find('dd').get_text())
@@ -51,6 +53,7 @@ while True:
             # save tages as a list of strings
             event['tags'] = tags.text.strip().split(', ')
 
+        pprint(event)
         events.append(event)
         i += 1
 
@@ -62,3 +65,13 @@ while True:
         break
 
 pprint(events)
+
+
+# connect to ES server
+es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+
+# store event data in ES
+doc_id = 0
+while doc_id < len(events):
+    es.index(index='events', doc_type='info', id=doc_id, body=events[doc_id])
+    doc_id += 1
