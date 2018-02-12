@@ -3,22 +3,33 @@
 
 import requests
 import re
+import sys
 from bs4 import BeautifulSoup
 from elasticsearch import Elasticsearch
 from pprint import pprint  # REVISIT: for debugging purpose only.
+
+# connect to ES server
+es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+doc_id = 0
 
 url = 'https://www.sfstation.com/'
 calendar = url + 'calendar/'
 page = requests.get(calendar)
 soup = BeautifulSoup(page.content, 'html.parser')
-events = []  # create a list of dicts where each event attributes are saved
 
+# TESTING: have the same number of event entries as stored in Elasticsearch
+events = []
+
+'''
+# TESTING: delete past indexes to start anew
+es.indices.delete(index='events')
+sys.exit()
+'''
 while True:
     # grab all event names and links on the page
     event_names = [name.text for name in soup.find_all('a', class_='url summary')]
     event_links = [link.get('href') for link in soup.find_all('a', class_='url summary')]
 
-    i = 0
     for i in range(len(event_names)):
         event = {}
         event['name'] = event_names[i]
@@ -43,7 +54,7 @@ while True:
             event['time'] = time.text
         if event_soup.find('dt', text=re.compile(r'Cost')):
             if event_soup.find('dd', class_='free'):
-                event['cost'] = 'free'
+                event['cost'] = 0  # for later price range query comparision
             else:
                 cost_str= event_soup.find('dt', text=re.compile(r'Cost')).next_sibling.next_sibling
                 cost = re.search('\d+', cost_str.text)
@@ -53,9 +64,13 @@ while True:
             # save tages as a list of strings
             event['tags'] = tags.text.strip().split(', ')
 
+        # TESTING: storing proper events
         pprint(event)
         events.append(event)
-        i += 1
+
+        # store event data in ES
+        es.index(index='events', doc_type='info', id=doc_id, body=event)
+        doc_id += 1
 
     if soup.select('div#listingPagination > a')[-1].get_text() == 'Next »':
         next_page = url + soup.select('div#listingPagination > a')[-1].get('href')
@@ -64,14 +79,5 @@ while True:
     else:
         break
 
-pprint(events)
-
-
-# connect to ES server
-es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
-
-# store event data in ES
-doc_id = 0
-while doc_id < len(events):
-    es.index(index='events', doc_type='info', id=doc_id, body=events[doc_id])
-    doc_id += 1
+# TESTING:
+print(len(events))
