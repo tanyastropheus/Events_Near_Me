@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>All Event Pins</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      // Place pin based on hardcoded geolocation
+
+      var locations = [
+        ["DJ Karma at #FlightFridays", 37.78902490000001, -122.4091439],
+        ["Don Diablo", 37.7879716, -122.3972152],
+        ["Udo Nöger: The Inside of Light", 37.7888664, -122.4054461],
+        ["Flight Fridays Guest List - 2.9.2018", 37.7856002, -122.4085226],
+        ["THOMAS SCHULTZ, pianist, plays two virtuoso pieces by Arnold Schoenberg", 37.746643, -122.4579363]
+        ]
+
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 13,
+          center: {lat: 37.781715, lng:-122.408367} //Holberton Address. REVISIT
+        });
+
+        var infowindow = new google.maps.InfoWindow();
+
+        var marker, i;
+
+        for (i = 0; i < locations.length; i++) {
+          marker = new google.maps.Marker({
+            position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+            map: map
+          });
+
+          google.maps.event.addListener(marker, 'click', (function(markerObj, nthElem) {
+            return function() {
+               infowindow.setContent(locations[nthElem][0]);
+               infowindow.open(map, markerObj);
+            }
+          })(marker, i));
+         }
+      }
+
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkdExJFmcG7SqmXTp481KAieX82H4NjGY&callback=initMap">
+    </script>
+  </body>
+</html>
