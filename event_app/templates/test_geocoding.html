@@ -34,10 +34,12 @@
           zoom: 14
         });
         geocoder = new google.maps.Geocoder();
+        console.log(typeof geocoder);
         codeAddress(geocoder, map);
       }
 
       function codeAddress(geocoder, map) {
+
         geocoder.geocode({'address': address}, function(results, status) {
           if (status === 'OK') {
             map.setCenter(results[0].geometry.location);

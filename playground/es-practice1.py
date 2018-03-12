@@ -173,9 +173,10 @@ es.index(index='event_test', doc_type='practice', id=3, body=event4)
 es.index(index='event_test', doc_type='practice', id=4, body=event5)
 '''
 
-'''
+
 # query data with specific tags
 # terms search through inverted index, which converts tokens into lowercase
+print("All events with the tag 'Family' and/or 'Arts':")
 pprint(es.search(index='event_test', doc_type='practice',
                  body={"query": {
                      'constant_score': {
@@ -189,6 +190,7 @@ pprint(es.search(index='event_test', doc_type='practice',
                    }))
 
 # query data with cost range
+print("All events with price range between 0 and 30:")
 pprint(es.search(index='event_test', doc_type='practice',
                  body={"query": {
                      'constant_score': {
@@ -205,14 +207,13 @@ pprint(es.search(index='event_test', doc_type='practice',
                    }))
 
 '''
-
-'''
 # Getting specific field attribute values
 pprint(es.get(index='event_test', doc_type='practice', id=1))
 pprint(es.count(index='event_test', doc_type='practice')['count'])
 pprint(es.get(index='event_test', doc_type='practice', id=1)['_source']['address'])
 '''
 
+'''
 # Look up longitude & latitude based on address && save it to ES
 api_key = 'AIzaSyAkdExJFmcG7SqmXTp481KAieX82H4NjGY'
 num_docs = es.count(index='event_test', doc_type='practice')['count']
@@ -237,3 +238,4 @@ while i < num_docs:
         print("geo request failed")
         sys.exit()
     i += 1
+'''
