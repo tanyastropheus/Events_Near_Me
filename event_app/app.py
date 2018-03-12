@@ -1,9 +1,12 @@
 #!/usr/bin/python3
 
-import requests
+import requests, json
 from elasticsearch import Elasticsearch
 from flask import Flask, render_template
+from flask_cors import CORS
+
 app = Flask(__name__)
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # check ES is up and running
 res = requests.get('http://localhost:9200')
@@ -14,37 +17,81 @@ es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
 
 @app.route('/')
 def show_all():
+    '''displays event data stored in ES'''
     search_all = requests.get('http://localhost:9200/events/_search?pretty')
     return search_all.content
 
 @app.route('/test')
 def test():
+    '''check that flask is up and serving the right webpages'''
     return render_template('test.html')
 
 @app.route('/map')
 def display_map():
-    '''displays Google Map with Holberton School address hard-coded in'''
-    return render_template('add_map.html')
+    '''displays Google Map with Holberton school as the center view.  No pin'''
+    return render_template('test_add_map.html')
 
 @app.route('/map/geocoding')
 def geocoding():
-    '''drop pin based on address (using geocode to convert to long & lat)'''
-    return render_template('geocoding.html')
+    '''test drop one pin based on hard-coded address'''
+    '''using geocode to convert address to long & lat'''
+    return render_template('test_geocoding.html')
 
-@app.route('/map/info_window')
-def info_window():
-    '''current the same as geocoding; REVISIT'''
-    return render_template('info_window.html')
+@app.route('/api/all_events')
+def all_events():
+    '''return all event data from DB'''
+    # index name to be queried
+    idx_name = 'event_test'
+    doc = 'practice'
 
+    # get total number of events
+    num_events = es.count(index=idx_name, doc_type=doc)['count']
+
+    events = {}  # a dict of event dicts
+    i = 0
+    while i < num_events:
+        event = {}  # {id: {'name': 'e_name', 'address': 'e_addr',...}}
+        event[i] = es.get(index=idx_name, doc_type=doc, id=str(i))['_source']
+        events.update(event)
+        i += 1
+
+    return json.dumps(events)
+
+@app.route('/map/all')
+def all_events_map():
+    '''drop pins based on lat&lon from ES using test'''
+    '''(index = event_test, doctype = practice)'''
+    return render_template('test_all_from_DB.html')
+
+# this is extra
 @app.route('/map/geo_detect')
 def geo_detect():
     '''detects user location based on user device'''
-    return render_template('geo_detect.html')
+    return render_template('test_geo_detect.html')
 
-@app.route('/map/geocoding_from_db')
-def geocoding_from_db():
+
+"""no longer needed since geolocation is saved in ES
+@app.route('/map/all')
+def all_events():
     '''drop pins based on address from test data (index = event_test)'''
-    return render_template('geocoding_from_db.html')
+    # index name to be queried
+    idx_name = 'event_test'
+    doc = 'practice'
+
+    # get total number of events
+    num_events = es.count(index=idx_name, doc_type=doc)['count']
+
+    events = {}  # a dict of event dicts
+    i = 0
+    while i < num_events:
+        event = {}  # {id: {'name': 'e_name', 'address': 'e_addr',...}}
+        event[i] = es.get(index=idx_name, doc_type=doc, id=str(i))['_source']
+        events.update(event)
+        i += 1
+
+    # return json.dumps(events)
+    return render_template('test_all.html')
+"""
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
