@@ -46,6 +46,9 @@ while True:
         if event_soup.find('dt', text=re.compile(r'When')):
             date = re.match('^[^(]+', event_soup.find('dd').get_text())
             event['date'] = date.group(0).strip()
+        if event_soup.select('.businessName'):
+            venue = event_soup.select_one('a.businessName').text
+            event['venue'] = venue
         if event_soup.find('span', class_='address'):
             address = event_soup.find('span', class_='address').text
             event['address'] = address
