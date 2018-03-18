@@ -43,6 +43,7 @@ while True:
         # REVISIT: This only grabs specified event attrs && doesn't take advantage of the flexibility of NoSQL DB
         # SOLUTION: include link to the event page
         # REVISIT: How to grab the blurb?
+        # REVISIT: What is an event has multiple venues/times/...etc?
         if event_soup.find('dt', text=re.compile(r'When')):
             date = re.match('^[^(]+', event_soup.find('dd').get_text())
             event['date'] = date.group(0).strip()
@@ -52,20 +53,27 @@ while True:
         if event_soup.find('span', class_='address'):
             address = event_soup.find('span', class_='address').text
             event['address'] = address
+        if event_soup.find(id='listingDescription'):
+            description = event_soup.find(id='listingDescription').text
+            des = description[13:]  # delete 'Description' in the string
+            event['description'] = des
+        if event_soup.find(id='mainImageOrigLink'):
+            image_url = event_soup.find(id='mainImageOrigLink').find_next('a').get('href')
+            event['image_url'] = image_url
         if event_soup.find('dt', text=re.compile(r'Time')):
-            time= event_soup.find('dt', text=re.compile(r'Time')).next_sibling.next_sibling
-            event['time'] = time.text
+            time= event_soup.find('dt', text=re.compile(r'Time')).find_next('dd').text
+            event['time'] = time
         if event_soup.find('dt', text=re.compile(r'Cost')):
             if event_soup.find('dd', class_='free'):
                 event['cost'] = 0  # for later price range query comparision
             else:
-                cost_str= event_soup.find('dt', text=re.compile(r'Cost')).next_sibling.next_sibling
-                cost = re.search('\d+', cost_str.text)
+                cost_str= event_soup.find('dt', text=re.compile(r'Cost')).find_next('dd').text
+                cost = re.search('\d+', cost_str)
                 event['cost'] = int(cost.group(0))
         if event_soup.find('dt', text=re.compile(r'Tags')):
-            tags = event_soup.find('dt', text=re.compile(r'Tags')).next_sibling.next_sibling
+            tags = event_soup.find('dt', text=re.compile(r'Tags')).find_next('dd').text
             # save tages as a list of strings
-            event['tags'] = tags.text.strip().split(', ')
+            event['tags'] = tags.strip().split(', ')
 
         # TESTING: storing proper events
         pprint(event)
