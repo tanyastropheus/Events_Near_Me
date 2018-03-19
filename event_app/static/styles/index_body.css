@@ -1,0 +1,19 @@
+.container1 {
+    display: flex;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 16px;
+    padding-left: 30px;
+    align-items: center;
+}
+
+input[type=text] {
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 4px;
+    height: 40px;
+    background-image: url('../images/search-icon.png');
+}
+
+.dropdown_tags {
+    display: none;
+}
