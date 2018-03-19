@@ -15,6 +15,10 @@ print(res.status_code)
 # connect to ES server
 es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
 
+@app.route('/index')
+def main():
+    return render_template('index.html')
+
 @app.route('/')
 def show_all():
     '''displays event data stored in ES'''
