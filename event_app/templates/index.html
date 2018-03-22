@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css?family=Catamaran:900" rel="stylesheet">
     <link rel="stylesheet" href="../static/styles/index_header.css">
-    <link rel="stylesheet" href="../static/styles/index_body.css">
+    <link rel="stylesheet" href="../static/styles/container1.css">
+    <script type="text/javascript" src="static/scripts/index.js"></script>
     <script></script>
   </head>
 
@@ -15,62 +16,62 @@
       <h1><i>What's happening around town?</i></h1>
     </header>
     <div class="container1">
-      <form action="REVISIT" method="post/get-REVISIT">
-      <input type="text" name="event_tags" id="tags" maxlength="100" placeholder="Event Keywords...">
-      </form>
-      <ul class="dropdown_tags">
-	<li>
-	  <ul>
-	    <li><input type="checkbox" />Activism/Cause</li>
-	    <li><input type="checkbox" />Home & Garden</li>
-	    <li><input type="checkbox" />Tour/Sightseeing</li>
-	    <li><input type="checkbox" />Theater/Performance Arts</li>
-	    <li><input type="checkbox" />Sports/Fitness</li>
-	    <li><input type="checkbox" />Shopping</li>
-	    <li><input type="checkbox" />Religion/Spiritual</li>
-	    <li><input type="checkbox" />Music</li>
-	  </ul>
-	</li>
-	<li>
-	  <ul>
-	    <li><input type="checkbox" />Museums</li>
-	    <li><input type="checkbox" />Film/Television</li>
-	    <li><input type="checkbox" />Literary</li>
-	    <li><input type="checkbox" />Health & Wellness</li>
-	    <li><input type="checkbox" />LGBTQ</li>
-	    <li><input type="checkbox" />Family/Children</li>
-	    <li><input type="checkbox" />Dance</li>
-	  </ul>
-	</li>
-	<li>
-	  <ul>
-	    <li><input type="checkbox" />Community</li>
-	    <li><input type="checkbox" />Clubs</li>
-	    <li><input type="checkbox" />Food & Drinks</li>
-	    <li><input type="checkbox" />Conference/Convention</li>
-	    <li><input type="checkbox" />Comedy</li>
-	    <li><input type="checkbox" />Lecture/Discussion</li>
-	    <li><input type="checkbox" />Class/Workshop</li>
-	  </ul>
-	</li>
-      </ul>
-      <span>within
-      </span>
-      <div>
+
+      <section class="event-keywords">
 	<form action="REVISIT" method="post/get-REVISIT">
-	  <input type="text" name="event_radius" placeholder="e.g. 2 (miles)">
+	  <input type="text" name="event_tags" id="tags" maxlength="100" placeholder="Event Keywords...">
+	</form>
+
+	<ul class="dropdown_tags">
+	  <li><input type="checkbox" />Activism/Cause</li>
+	  <li><input type="checkbox" />Home & Garden</li>
+	  <li><input type="checkbox" />Tour/Sightseeing</li>
+	  <li><input type="checkbox" />Theater/Performance Arts</li>
+	  <li><input type="checkbox" />Sports/Fitness</li>
+	  <li><input type="checkbox" />Shopping</li>
+	  <li><input type="checkbox" />Religion/Spiritual</li>
+	  <li><input type="checkbox" />Music</li>
+	  <li><input type="checkbox" />Museums</li>
+	  <li><input type="checkbox" />Film/Television</li>
+	  <li><input type="checkbox" />Literary</li>
+	  <li><input type="checkbox" />Health & Wellness</li>
+	  <li><input type="checkbox" />LGBTQ</li>
+	  <li><input type="checkbox" />Family/Children</li>
+	  <li><input type="checkbox" />Dance</li>
+	  <li><input type="checkbox" />Community</li>
+	  <li><input type="checkbox" />Clubs</li>
+	  <li><input type="checkbox" />Food & Drinks</li>
+	  <li><input type="checkbox" />Conference/Convention</li>
+	  <li><input type="checkbox" />Comedy</li>
+	  <li><input type="checkbox" />Lecture/Discussion</li>
+	  <li><input type="checkbox" />Class/Workshop</li>
+	</ul>
+      </section>
+
+      <span>within</span>
+
+      <div class="distance">
+	<form action="REVISIT" method="post/get-REVISIT">
+	  <input type="text" name="radius" placeholder="2" id="radius">
 	</form>
       </div>
-      <span>miles of
-      </span>
+
+      <span>miles of</span>
+
       <div>
 	<form action="REVISIT" method="post/get-REVISIT">
-	  <input type="text" name="user_location" placeholder="San Francisco">
+	  <input type="text" name="user_location" placeholder="San Francisco, CA">
 	</form>
       </div>
     </div>
 
-
+<!--
+    <div class="container2">
+      <div>Date</div>
+      <div>Cost</div>
+      <div>Time</div>
+    </div>
+-->
     <footer>
     </footer>
   </body>
