@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css?family=Catamaran:900" rel="stylesheet">
     <link rel="stylesheet" href="../static/styles/index_header.css">
-    <link rel="stylesheet" href="../static/styles/container1.css">
+    <link rel="stylesheet" href="../static/styles/index_body.css">
     <script type="text/javascript" src="static/scripts/index.js"></script>
     <script></script>
   </head>
@@ -16,9 +16,8 @@
       <h1><i>What's happening around town?</i></h1>
     </header>
     <div class="container1">
-
-      <section class="event-keywords">
-	<form action="REVISIT" method="post/get-REVISIT">
+      <div class="event-keywords">
+	<form>
 	  <input type="text" name="event_tags" id="tags" maxlength="100" placeholder="Event Keywords...">
 	</form>
 
@@ -46,32 +45,59 @@
 	  <li><input type="checkbox" />Lecture/Discussion</li>
 	  <li><input type="checkbox" />Class/Workshop</li>
 	</ul>
-      </section>
+      </div>
 
-      <span>within</span>
+      <div>within</div>
 
       <div class="distance">
-	<form action="REVISIT" method="post/get-REVISIT">
+	<form>
 	  <input type="text" name="radius" placeholder="2" id="radius">
 	</form>
       </div>
 
-      <span>miles of</span>
+      <div>miles of</div>
 
       <div>
-	<form action="REVISIT" method="post/get-REVISIT">
+	<form>
 	  <input type="text" name="user_location" placeholder="San Francisco, CA">
 	</form>
       </div>
     </div>
 
-<!--
+
     <div class="container2">
-      <div>Date</div>
-      <div>Cost</div>
-      <div>Time</div>
+      <section class="event-cost">
+	<button type="button">Cost</button>
+	<div class="cost-slider">
+	  <div id="price">$</div>
+	  <input type="range" name="cost" id="cost-range" min="0" max="100" value="20"/>
+	</div>
+      </section>
+
+      <button type="button">Date</button>
+
+      <div class="time">
+	<button type="button">Time</button>
+	<div class="hours">
+	  <div>
+	    <label>
+	      <input type="checkbox">
+	    </label>Morning
+	  </div>
+	  <div>
+	    <label>
+	      <input type="checkbox">
+	    </label>Afternoon
+	  </div>
+	  <div>
+	    <label>
+	      <input type="checkbox">
+	    </label>Evening
+	  </div>
+	</div>
+	<button id="search" type="button">Search</button>
     </div>
--->
+
     <footer>
     </footer>
   </body>
