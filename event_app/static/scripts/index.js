@@ -21,61 +21,67 @@ $(document).ready( function() {
 //function getEvents()
 
 
-let event = {}  // event object with attributes (keyword, date, time...) as key
-/* event = {keywords: "",  (user input - free text search)
-            tags: [], (checked boxes - exact match)
-	    cost: 0 (upperbound),
-	    time: "",
-	    date: ""}
-*/
-let tags = []
+let event = {
+  keywords: "",
+  tags: [],
+  cost: 0,  //upper bound of cost
+  time: "",
+  date: ""
+}
 
-$(document).ready(function() {
+$(document).ready(function () {
   // dropdown menu display upon clicking on Event Keywords form area
   $('.event-keywords form').on('click', function () {
     $('.dropdown_tags').show();
   });
 
-  // retrieving user keywords
-  $('li input[type=checkbox]').get(0).focus(function () {
-    console.log("in focus!");
-    if (typeof $('#tags').val() != 'undefined') {  // if text input exists
-      console.log($('#tags').val());
-      $('li input[type=checkbox]').blur(function () {
-	event[keywords] = $('#tags').val();
-	console.log(event);
+  /* 1. Accept either user keywords or checked event tags.
+     2. User keywords may be added at the end of event tags selection, in which
+     case the entire input is taken as user keywords.  Event tags will be an
+     empty array.
+     3. User keywords entered at the beginning or the middle of event tags
+     selection will be erased and replaced by the checked event tags.
+  */
+
+  // get user keywords input
+  $('form #tags').focus(function () {
+    $('form #tags').blur(function () {
+      if (typeof $('#tags').val() != 'undefined') {   // if text input exists
+	event['keywords'] = $('form #tags').val();
+	event['tags'] = [];
+	console.log(event['keywords']);
+	console.log(event['tags']);
 	// remove existing pins on the map
 	// call getAttrs()
 	// call getEvents()
-      });
-    }
+      }
+    });
   });
 
-
-  // add event tags to the tags array
+  // get event tags
   $('li input[type=checkbox]').on('click', function () {
     if (this.checked) {  // add checked tag to the array
-      tags.push(this.dataset.name);
-
+      event['tags'].push(this.dataset.name);
+      event['keywords'] = "";  // remove user input from event object
       // remove existing pins on the map
       // call getAttrs()
       // call getEvents()
 
     } else {  // remove unchecked tag from the array
-      const index = tags.indexOf(this.dataset.name);
+      const index = event['tags'].indexOf(this.dataset.name);
       if (index !== -1) {
-	tags.splice(index, 1);
+	event['tags'].splice(index, 1);
       }
 
       // remove existing pins on the map
       // call getAttrs()
       // call getEvents()
     }
-    console.log(tags);
-
+    console.log(event['tags']);
+    console.log(event['keywords']);
     // display the checked tags in the Keyword search area
-    if (tags.length > 0) {
-      $('#tags').val(tags.join(', '));
+    if (event['tags'].length > 0) {
+      $('#tags').val(event['tags'].join(', '));
       } else {
 	$('#tags').val("");
       }
