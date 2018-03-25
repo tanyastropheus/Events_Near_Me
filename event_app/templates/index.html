@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css?family=Catamaran:900" rel="stylesheet">
     <link rel="stylesheet" href="../static/styles/index_header.css">
     <link rel="stylesheet" href="../static/styles/index_body.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="static/scripts/index.js"></script>
     <script></script>
   </head>
@@ -18,40 +19,43 @@
     <div class="container1">
       <div class="event-keywords">
 	<form>
-	  <input type="text" name="event_tags" id="tags" maxlength="100" placeholder="Event Keywords...">
+	  <input type="text" name="event_tags" id="tags" maxlength="100" placeholder="Enter Event Keywords...">
 	</form>
-
+	<!--
+	    sfstation event tags changes  based on popularity; need to revisit, or use Relevance Score
+	-->
 	<ul class="dropdown_tags">
-	  <li><input type="checkbox" />Activism/Cause</li>
-	  <li><input type="checkbox" />Home & Garden</li>
-	  <li><input type="checkbox" />Tour/Sightseeing</li>
-	  <li><input type="checkbox" />Theater/Performance Arts</li>
-	  <li><input type="checkbox" />Sports/Fitness</li>
-	  <li><input type="checkbox" />Shopping</li>
-	  <li><input type="checkbox" />Religion/Spiritual</li>
-	  <li><input type="checkbox" />Music</li>
-	  <li><input type="checkbox" />Museums</li>
-	  <li><input type="checkbox" />Film/Television</li>
-	  <li><input type="checkbox" />Literary</li>
-	  <li><input type="checkbox" />Health & Wellness</li>
-	  <li><input type="checkbox" />LGBTQ</li>
-	  <li><input type="checkbox" />Family/Children</li>
-	  <li><input type="checkbox" />Dance</li>
-	  <li><input type="checkbox" />Community</li>
-	  <li><input type="checkbox" />Clubs</li>
-	  <li><input type="checkbox" />Food & Drinks</li>
-	  <li><input type="checkbox" />Conference/Convention</li>
-	  <li><input type="checkbox" />Comedy</li>
-	  <li><input type="checkbox" />Lecture/Discussion</li>
-	  <li><input type="checkbox" />Class/Workshop</li>
+	  <li><label><input type="checkbox" data-name="Any"/>Any Event</label></li>
+	  <li><label><input type="checkbox" data-name="Art"/>Art<label></li>
+	  <li><label><input type="checkbox" data-name="Activism"/>Activism</label></li>
+	  <li><label><input type="checkbox" data-name="Home & Garden"/>Home & Garden</label></li>
+	  <li><label><input type="checkbox" data-name="Tour/Sightseeing"/>Tour/Sightseeing</label></li>
+	  <li><label><input type="checkbox" data-name="Theater/Performance arts"/>Theater/Performance Arts</label></li>
+	  <li><label><input type="checkbox" data-name="Health/Fitness"/>Health/Fitness</label></li>
+	  <li><label><input type="checkbox" data-name="Religion/Spiritual"/>Religion/Spiritual</label></li>
+	  <li><label><input type="checkbox" data-name="Music"/>Music</label></li>
+	  <li><label><input type="checkbox" data-name="Museum"/>Museums</label></li>
+	  <li><label><input type="checkbox" data-name="Film"/>Film/Television</label></li>
+	  <li><label><input type="checkbox" data-name="Literary"/>Literary</label></li>
+	  <li><label><input type="checkbox" data-name="Health & Wellness"/>Health & Wellness</label></li>
+	  <li><label><input type="checkbox" data-name="LGBTQ"/>LGBTQ</label></li>
+	  <li><label><input type="checkbox" data-name="Family/Children"/>Family/Children</label></li>
+	  <li><label><input type="checkbox" data-name="Dance"/>Dance</label></li>
+	  <li><label><input type="checkbox" data-name="Community"/>Community</label></li>
+	  <li><label><input type="checkbox" data-name="Clubs"/>Clubs</label></li>
+	  <li><label><input type="checkbox" data-name="Food & Drinks"/>Food & Drinks</label></li>
+	  <li><label><input type="checkbox" data-name="Comedy"/>Comedy</label></li>
+	  <li><label><input type="checkbox" data-name="Lecture/Discussion"/>Lecture/Discussion</label></li>
+	  <li><label><input type="checkbox" data-name="Class/Workshop"/>Class/Workshop</label></li>
 	</ul>
+
       </div>
 
       <div>within</div>
 
       <div class="distance">
 	<form>
-	  <input type="text" name="radius" placeholder="2" id="radius">
+	  <input type="text" id="radius" name="radius" value="2">
 	</form>
       </div>
 
@@ -59,7 +63,7 @@
 
       <div>
 	<form>
-	  <input type="text" name="user_location" placeholder="San Francisco, CA">
+	  <input type="text" name="user_location" value="San Francisco, CA">
 	</form>
       </div>
     </div>

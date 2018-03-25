@@ -22,8 +22,12 @@ input::placeholder {
 input#tags {
     background-image: url('../images/search-icon.png');
     background-repeat: no-repeat;
-    background-position: 95% 50%;
-    padding-right: 35px;
+    background-position: 98% 50%;
+    padding-right: 40px;
+    width: 500px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 
@@ -33,6 +37,7 @@ input#radius {
 
 .dropdown_tags {
     display: none;
+    font-size: 16px;
     columns: 3;
     -webkit-columns: 3;
     -moz-columns: 3;
@@ -42,14 +47,30 @@ input#radius {
     background-color: #FAFAFA;
     list-style-type: none;
     z-index: 1;
-    padding: 10px;
+    padding: 20px;
     overflow: scroll;
     margin-top: 10px;
 }
 
 .dropdown_tags input {
     margin-right: 10px;
-    margin-top: 10px;
+}
+
+ul.dropdown_tags li:hover {
+    background-color: #DCDCDC;
+    border-radius: 4px;
+}
+
+ul.dropdown_tags li {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+button#done {  /* REVISIT need to test */
+    position: absolute;
+    right: 1%;
+    bottom: auto;
+    margin-bottom: 10px;
 }
 
 .distance {
