@@ -24,6 +24,8 @@ $(document).ready( function() {
 let event = {
   keywords: "",
   tags: [],
+  radius: 2,
+  user_location: "San Francisco, CA",
   cost: 0,  //upper bound of cost
   time: "",
   date: ""
@@ -35,7 +37,13 @@ $(document).ready(function () {
     $('.dropdown_tags').show();
   });
 
-  /* 1. Accept either user keywords or checked event tags.
+  // dropdown menu hidden when user moves the mouse elsewhere
+  $('.dropdown_tags').mouseleave(function () {
+    $('.dropdown_tags').hide();
+  });
+
+  /* Event Keywords Form:
+     1. Accept either user keywords or checked event tags.
      2. User keywords may be added at the end of event tags selection, in which
      case the entire input is taken as user keywords.  Event tags will be an
      empty array.
@@ -44,8 +52,8 @@ $(document).ready(function () {
   */
 
   // get user keywords input
-  $('form #tags').focus(function () {
-    $('form #tags').blur(function () {
+  $('#tags').focus(function () {
+    $('#tags').blur(function () {
       if (typeof $('#tags').val() != 'undefined') {   // if text input exists
 	event['keywords'] = $('form #tags').val();
 	event['tags'] = [];
@@ -79,6 +87,7 @@ $(document).ready(function () {
     }
     console.log(event['tags']);
     console.log(event['keywords']);
+
     // display the checked tags in the Keyword search area
     if (event['tags'].length > 0) {
       $('#tags').val(event['tags'].join(', '));
@@ -86,4 +95,64 @@ $(document).ready(function () {
 	$('#tags').val("");
       }
   });
+
+  // get radius
+  $('#radius').focus(function () {
+    $('#radius').blur(function () {
+      if (typeof $('#radius').val() != 'undefined') {   // if text input exists
+	event['radius'] = $('#radius').val();
+	console.log(event['radius']);
+	// remove existing pins on the map
+	// call getAttrs()
+	// call getEvents()
+      }
+    });
+  });
+
+  // get user location
+  $('#user_location').focus(function () {
+    $('#user_location').blur(function () {
+      if (typeof $('#user_location').val() != 'undefined') {   // if text input exists
+	event['user_location'] = $('#user_location').val();
+	console.log(event['user_location']);
+	// remove existing pins on the map
+	// call getAttrs()
+	// call getEvents()
+      }
+    });
+  });
+
+  // cost slider appears when user clicks on the cost button
+  $('#cost').click(function () {
+    $('.cost-slider').show();
+  });
+
+  // cost display on the dropdown updates with slider movement
+  $( "#cost-range" ).slider({
+    range: "min",
+    value: 20,
+    min: 0,
+    max: 100,
+    slide: function( event, ui ) {
+      if (ui.value === 100) {
+	$( "#price" ).text( "$" + ui.value + "+");
+	} else {
+	  $( "#price" ).text( "$" + ui.value );
+	}
+    }
+  });
+  $("#price").text("$" + $( "#cost-range" ).slider( "value" ) );
+
+  // cost slider disappears when user moves mouse away
+  // cost button is updated with cost display
+  $('.cost-slider').mouseleave(function () {
+    $('.cost-slider').hide();
+    $('#cost').text($('#price').text());
+    $('#cost').css({"background-color": "#f44271", "color": "white"});
+    // remove existing pins on the map
+    // call getAttrs()
+    // call getEvents()
+  });
+
+
 });

@@ -47,7 +47,7 @@ input#radius {
     background-color: #FAFAFA;
     list-style-type: none;
     z-index: 1;
-    padding: 20px;
+    padding: 10px 20px 20px 20px;
     overflow: scroll;
     margin-top: 10px;
 }
@@ -63,7 +63,6 @@ ul.dropdown_tags li:hover {
 
 ul.dropdown_tags li {
     padding-top: 10px;
-    padding-bottom: 10px;
 }
 
 button#done {  /* REVISIT need to test */
@@ -100,6 +99,10 @@ button, div.hours {
     border: 1px solid #DDDDDD;
     border-radius: 4px;
     padding: 20px;
+    width: 200px;
+    font-size: 16px;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+
 }
 
 #cost-range {
