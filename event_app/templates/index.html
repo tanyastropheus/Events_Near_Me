@@ -5,9 +5,12 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css?family=Catamaran:900" rel="stylesheet">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="../static/styles/index_header.css">
     <link rel="stylesheet" href="../static/styles/index_body.css">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script type="text/javascript" src="static/scripts/index.js"></script>
     <script></script>
   </head>
@@ -63,7 +66,7 @@
 
       <div>
 	<form>
-	  <input type="text" name="user_location" value="San Francisco, CA">
+	  <input type="text" name="user_location" id="user_location" value="San Francisco, CA">
 	</form>
       </div>
     </div>
@@ -71,17 +74,17 @@
 
     <div class="container2">
       <section class="event-cost">
-	<button type="button">Cost</button>
+	<button id="cost" type="button">Cost</button>
 	<div class="cost-slider">
-	  <div id="price">$</div>
-	  <input type="range" name="cost" id="cost-range" min="0" max="100" value="20"/>
+	  <label>Maximum: &nbsp;<span id="price">$</span></label>
+	  <div id="cost-range"> </div>
 	</div>
       </section>
 
-      <button type="button">Date</button>
+      <button id="date" type="button">Date</button>
 
       <div class="time">
-	<button type="button">Time</button>
+	<button id="time" type="button">Time</button>
 	<div class="hours">
 	  <div>
 	    <label>
@@ -99,7 +102,6 @@
 	    </label>Evening
 	  </div>
 	</div>
-	<button id="search" type="button">Search</button>
     </div>
 
     <footer>
