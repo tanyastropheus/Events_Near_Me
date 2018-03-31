@@ -36,7 +36,6 @@ $(document).ready(function () {
   */
 
   // get user keywords input
-/*
   $('#tags').blur(function () {
     console.log("blur happened");
     // if text input exists
@@ -44,6 +43,14 @@ $(document).ready(function () {
       console.log("some input");
       event['keywords'] = $('form #tags').val();
       event['tags'] = [];
+
+     // uncheck all event tags
+      $('.dropdown_tags li').each(function () {
+	if ($(this).find("input").prop("checked")) {
+	  $(this).find("input").prop("checked", false);
+	}
+      });
+
       console.log("keywords:", event['keywords']);
       console.log("tags: ", event['tags']);
 
@@ -52,7 +59,6 @@ $(document).ready(function () {
       // call getEvents()
     }
   });
-*/
 
   // get event tags
   // user can click on event tag <li> to check boxes
