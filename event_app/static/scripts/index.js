@@ -11,7 +11,7 @@ let event = {
   radius: 2,
   user_location: "San Francisco, CA",
   cost: 0,  //upper bound of cost
-  time: "",
+  time: [],
   date: ""
 }
 
@@ -35,10 +35,12 @@ $(document).ready(function () {
      selection will be erased and replaced by the checked event tags.
   */
 
-  // get user keywords input
+  // updates query as user enters event keywords
   $('#tags').blur(function () {
     console.log("blur happened");
-    // if text input exists
+
+    // if text input exists, clear all checked event tags
+    // will perform free text search
     if (typeof $('#tags').val() != 'undefined') {
       console.log("some input");
       event['keywords'] = $('form #tags').val();
@@ -60,7 +62,7 @@ $(document).ready(function () {
     }
   });
 
-  // get event tags
+  // updates query as user makes event tag selections
   // user can click on event tag <li> to check boxes
   $('.dropdown_tags li').click(function () {
     if ($(this).find("input").prop("checked") === false) {
@@ -99,7 +101,7 @@ $(document).ready(function () {
     }
   });
 
-  // get radius
+  // updates query as user enters radius to search
   $('#radius').focus(function () {
     $('#radius').blur(function () {
       if (typeof $('#radius').val() != 'undefined') {   // if text input exists
@@ -112,7 +114,7 @@ $(document).ready(function () {
     });
   });
 
-  // get user location
+  // updates query as user enters location
   $('#user_location').focus(function () {
     $('#user_location').blur(function () {
       if (typeof $('#user_location').val() != 'undefined') {   // if text input exists
@@ -162,10 +164,49 @@ $(document).ready(function () {
     $('.hours').show();
   });
 
-  // time dropdown disappears when user mouses away
-  // time button is updated with user input
+  // update map as user makes time selection
+  $('.hours li').click(function () {
+    if ($(this).find("input").prop("checked") === false) {
+      $(this).find("input").prop("checked", true);
+
+      // add checked tags to array
+      event['time'].push(this.children[0].children[0].dataset.name);
+
+      // remove existing pins on the map
+      // call getAttrs()
+      // call getEvents()
+
+    } else {
+      $(this).find("input").prop("checked", false);
+
+      // remove unchecked tag from the array
+      const index = event['time'].indexOf(this.children[0].children[0].dataset.name);
+
+      if (index !== -1) {
+	event['time'].splice(index, 1);
+      }
+    }
+
+    console.log("times: ", event['time']);
+    // remove existing pins on the map
+    // call getAttrs()
+    // call getEvents()
+  });
+
+  // time dropdown disappears when user moves mouse away
+  // time button is updated with times selected
   $('.hours').mouseleave(function () {
     $('.hours').hide();
+    if (event['time'].length === 3 || event['time'].length === 0) {
+      $('#time').text("All Day");
+    } else {
+      $('#time').text(event['time'].join(', '));
+    }
+    $('#time').css({"background-color": "#f44271", "color": "white"});
+    // remove existing pins on the map
+    // call getAttrs()
+    // call getEvents()
   });
+
 
 });

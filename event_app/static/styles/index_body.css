@@ -24,7 +24,7 @@ input#tags {
     background-repeat: no-repeat;
     background-position: 98% 50%;
     padding-right: 40px;
-    width: 500px;
+    width: 610px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
@@ -62,14 +62,7 @@ ul.dropdown_tags li:hover {
 }
 
 ul.dropdown_tags li {
-    padding-top: 10px;
-}
-
-button#done {  /* REVISIT need to test */
-    position: absolute;
-    right: 1%;
-    bottom: auto;
-    margin-bottom: 10px;
+    padding: 10px 10px 5px 5px;
 }
 
 .distance {
@@ -88,8 +81,9 @@ button, div.hours {
     font-size: 16px;
     font-family: 'Helvetica', 'Arial', sans-serif;
     padding: 10px 24px;
-    margin: 15px 5px 10px 10px;
+    margin: 15px 20px 10px 10px;
     color: #404040;
+    width: 200px;
 }
 
 .cost-slider {
@@ -114,25 +108,29 @@ div#price {
     font-family: 'Helvetica', 'Arial', sans-serif;
 }
 
-div.hours {
+ul.hours {
     display: none;
+    width: 130px;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
     position: absolute;
     z-index: 1;
     margin: 0;
-    padding-left: 5px;
+    list-style-type: none;
+    padding: 10px 10px 20px 10px;
+    font-family: "Helvetica", "Arial", sans-serif;
+    font-size: 16px;
 }
 
-div.hours input {
-    margin-left: 20px;
+ul.hours input {
+    margin-right: 10px;
 }
 
-div.hours div {
-    margin-bottom: 10px;
+.hours li {
+    padding: 10px 5px 5px 5px;
 }
 
-.container2 button#search {
-    position: relative;
-    left: 112px;
-    background-color: #42f4ee;
-    width: 220px;
+.hours li:hover {
+    background-color: #DCDCDC;
+    border-radius: 4px;
 }
