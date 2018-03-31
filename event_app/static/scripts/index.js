@@ -1,19 +1,3 @@
-// add slider for radius distance
-/*
-$(document).ready( function() {
-    $( "#slider-range-min" ).slider({
-      range: "min",
-      value: 37,
-      min: 1,
-      max: 700,
-      slide: function( event, ui ) {
-        $( "#amount" ).val( "$" + ui.value );
-      }
-    });
-    $( "#amount" ).val( "$" + $( "#slider-range-min" ).slider( "value" ) );
-  } );
-*/
-
 // collect input from all form fields and save them to the event object
 //function getAttrs()
 
@@ -42,7 +26,7 @@ $(document).ready(function () {
     $('.dropdown_tags').hide();
   });
 
-  /* Event Keywords Form:
+  /* Event Keywords Input:
      1. Accept either user keywords or checked event tags.
      2. User keywords may be added at the end of event tags selection, in which
      case the entire input is taken as user keywords.  Event tags will be an
@@ -52,48 +36,61 @@ $(document).ready(function () {
   */
 
   // get user keywords input
-  $('#tags').focus(function () {
-    $('#tags').blur(function () {
-      if (typeof $('#tags').val() != 'undefined') {   // if text input exists
-	event['keywords'] = $('form #tags').val();
-	event['tags'] = [];
-	console.log(event['keywords']);
-	console.log(event['tags']);
-	// remove existing pins on the map
-	// call getAttrs()
-	// call getEvents()
-      }
-    });
-  });
-
-  // get event tags
-  $('li input[type=checkbox]').on('click', function () {
-    if (this.checked) {  // add checked tag to the array
-      event['tags'].push(this.dataset.name);
-      event['keywords'] = "";  // remove user input from event object
-      // remove existing pins on the map
-      // call getAttrs()
-      // call getEvents()
-
-    } else {  // remove unchecked tag from the array
-      const index = event['tags'].indexOf(this.dataset.name);
-      if (index !== -1) {
-	event['tags'].splice(index, 1);
-      }
+/*
+  $('#tags').blur(function () {
+    console.log("blur happened");
+    // if text input exists
+    if (typeof $('#tags').val() != 'undefined') {
+      console.log("some input");
+      event['keywords'] = $('form #tags').val();
+      event['tags'] = [];
+      console.log("keywords:", event['keywords']);
+      console.log("tags: ", event['tags']);
 
       // remove existing pins on the map
       // call getAttrs()
       // call getEvents()
     }
-    console.log(event['tags']);
-    console.log(event['keywords']);
+  });
+*/
+
+  // get event tags
+  // user can click on event tag <li> to check boxes
+  $('.dropdown_tags li').click(function () {
+    if ($(this).find("input").prop("checked") === false) {
+      $(this).find("input").prop("checked", true);
+
+      // add checked tags to array
+      event['tags'].push(this.children[0].children[0].dataset.name);
+      event['keywords'] = "";  // remove user input from event object
+
+      // remove existing pins on the map
+      // call getAttrs()
+      // call getEvents()
+
+    } else {
+      $(this).find("input").prop("checked", false);
+
+      // remove unchecked tag from the array
+      const index = event['tags'].indexOf(this.children[0].children[0].dataset.name);
+
+      if (index !== -1) {
+	event['tags'].splice(index, 1);
+      }
+    }
+    // remove existing pins on the map
+    // call getAttrs()
+    // call getEvents()
+
+    console.log("tags: ", event['tags']);
+    console.log("keywords: ", event['keywords']);
 
     // display the checked tags in the Keyword search area
     if (event['tags'].length > 0) {
       $('#tags').val(event['tags'].join(', '));
-      } else {
-	$('#tags').val("");
-      }
+    } else {
+      $('#tags').val("");
+    }
   });
 
   // get radius
@@ -154,5 +151,15 @@ $(document).ready(function () {
     // call getEvents()
   });
 
+  // time dropdown apppears when user clicks on the Time button
+  $('#time').click(function () {
+    $('.hours').show();
+  });
+
+  // time dropdown disappears when user mouses away
+  // time button is updated with user input
+  $('.hours').mouseleave(function () {
+    $('.hours').hide();
+  });
 
 });
