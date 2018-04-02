@@ -159,6 +159,7 @@ ul.hours input {
 
 .hours li {
     padding: 10px 5px 5px 5px;
+    font-size: 18px;
 }
 
 .hours li:hover {
