@@ -107,6 +107,7 @@ button, div.hours {
     width: 50px;
     margin: auto;
     padding: 0;
+    color: #008489;
 }
 
 #cost-apply {
@@ -119,10 +120,6 @@ button, div.hours {
 
 .apply button:focus {
     outline: none;
-}
-
-.apply button:hover {
-    color: #008489;
 }
 
 button, li {

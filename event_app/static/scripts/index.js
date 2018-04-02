@@ -22,10 +22,11 @@ $(document).ready(function () {
   });
 
   // dropdown menu hidden when user moves the mouse elsewhere
+/*
   $('.dropdown_tags').mouseleave(function () {
     $('.dropdown_tags').hide();
   });
-
+*/
   /* Event Keywords Input:
      1. Accept either user keywords or checked event tags.
      2. User keywords may be added at the end of event tags selection, in which
@@ -156,12 +157,7 @@ $(document).ready(function () {
   // cost slider disappears when user moves mouse away
   // cost button is updated with cost display
   $('#cost-apply').click(function () {
-    $('.cost-slider').hide();
-    $('#cost').text($('#price').text());
-    $('#cost').css({"background-color": "#f44271", "color": "white"});
-    // remove existing pins on the map
-    // call getAttrs()
-    // call getEvents()
+    hideCost();
   });
 
   // time dropdown apppears when user clicks on the Time button
@@ -194,18 +190,48 @@ $(document).ready(function () {
     console.log(event['time']);
   });
 
-  // time dropdown disappears when user moves mouse away
-  // time button is updated with times selected
+  // time button is updated with times selected after Apply button is pressed
   $('#time-apply').click(function () {
-    $('.hours').hide();
-    if (event['time'].length === 3 || event['time'].length === 0) {
-      $('#time').text("All Day");
-    } else {
-      $('#time').text(event['time'].join(', '));
-    }
-    $('#time').css({"background-color": "#f44271", "color": "white"});
-    // remove existing pins on the map
-    // call getAttrs()
-    // call getEvents()
+    hideTime();
   });
+
+  // hides dropdown menu when user clicks outside the menu
+  $(document).click(function (event){
+
+    if (!$(event.target).closest('div.event-keywords').length) {
+      $('ul.dropdown_tags').hide();
+    }
+    if (!$(event.target).closest('section.event-cost').length) {
+      hideCost();
+    }
+    if (!$(event.target).closest('div.time').length) {
+      hideTime();
+    }
+  });
+
 });
+
+// hides Time dropdown && update button with selected time
+function hideTime() {
+  $('.hours').hide();
+  if (event['time'].length === 3 || event['time'].length === 0) {
+    $('#time').text("All Day");
+  } else {
+    $('#time').text(event['time'].join(', '));
+  }
+  $('#time').css({"background-color": "#f44271", "color": "white"});
+  // remove existing pins on the map
+  // call getAttrs()
+  // call getEvents()
+}
+
+
+// hides Cost dropdown && update button with selected cost
+function hideCost() {
+  $('.cost-slider').hide();
+  $('#cost').text($('#price').text());
+  $('#cost').css({"background-color": "#f44271", "color": "white"});
+  // remove existing pins on the map
+  // call getAttrs()
+  // call getEvents()
+}
