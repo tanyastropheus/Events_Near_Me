@@ -171,31 +171,27 @@ $(document).ready(function () {
 
   // update map as user makes time selection
   $('.hours li').click(function () {
-    if ($(this).find("input").prop("checked") === false) {
+    timeSlot = this.children[0].children[0].dataset.name
+
+    if (event['time'].includes(timeSlot) === false) {
+      // add checked time slot to array
+      event['time'].push(timeSlot);
+
+      // checkbox display checked
       $(this).find("input").prop("checked", true);
 
-      // add checked tags to array
-      event['time'].push(this.children[0].children[0].dataset.name);
-
-      // remove existing pins on the map
-      // call getAttrs()
-      // call getEvents()
-
     } else {
-      $(this).find("input").prop("checked", false);
-
-      // remove unchecked tag from the array
+      // remove time slot from array
       const index = event['time'].indexOf(this.children[0].children[0].dataset.name);
 
       if (index !== -1) {
 	event['time'].splice(index, 1);
+
+	// checkbox display unchecked
+	$(this).find("input").prop("checked", false);
       }
     }
-
-    console.log("times: ", event['time']);
-    // remove existing pins on the map
-    // call getAttrs()
-    // call getEvents()
+    console.log(event['time']);
   });
 
   // time dropdown disappears when user moves mouse away
@@ -212,6 +208,4 @@ $(document).ready(function () {
     // call getAttrs()
     // call getEvents()
   });
-
-
 });
