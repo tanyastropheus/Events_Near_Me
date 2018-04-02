@@ -186,13 +186,16 @@ $(document).ready(function () {
   // hides dropdown menu when user clicks outside the menu
   $(document).click(function (event){
 
-    if (!$(event.target).closest('div.event-keywords').length) {
+    if (!$(event.target).closest('div.event-keywords').length
+    && $('.dropdown_tags').is(":visible")) {
       $('ul.dropdown_tags').hide();
     }
-    if (!$(event.target).closest('section.event-cost').length) {
+    if (!$(event.target).closest('section.event-cost').length
+	&& $('.cost-slider').is(":visible")) {
       hideCost();
     }
-    if (!$(event.target).closest('div.time').length) {
+    if (!$(event.target).closest('div.time').length
+       && $('.hours').is(":visible")) {
       hideTime();
     }
   });
