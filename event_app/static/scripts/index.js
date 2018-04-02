@@ -62,33 +62,32 @@ $(document).ready(function () {
     }
   });
 
-  // updates query as user makes event tag selections
-  // user can click on event tag <li> to check boxes
+  // updates query as user makes event tag selection by clicking on <li>
   $('.dropdown_tags li').click(function () {
-    if ($(this).find("input").prop("checked") === false) {
-      $(this).find("input").prop("checked", true);
+    eventTag = this.children[0].children[0].dataset.name
+    if (event['tags'].includes(eventTag) === false) {
 
       // add checked tags to array
-      event['tags'].push(this.children[0].children[0].dataset.name);
+      event['tags'].push(eventTag);
       event['keywords'] = "";  // remove user input from event object
 
-      // remove existing pins on the map
-      // call getAttrs()
-      // call getEvents()
-
+      // checkbox display checked
+      $(this).find("input").prop("checked", true);
     } else {
-      $(this).find("input").prop("checked", false);
 
-      // remove unchecked tag from the array
-      const index = event['tags'].indexOf(this.children[0].children[0].dataset.name);
+      // remove unchecked tags from the array
+      const index = event['tags'].indexOf(eventTag);
 
       if (index !== -1) {
 	event['tags'].splice(index, 1);
+
+	// checkbox display unchecked
+	$(this).find("input").prop("checked", false);
       }
     }
-    // remove existing pins on the map
-    // call getAttrs()
-    // call getEvents()
+      // remove existing pins on the map
+      // call getAttrs()
+      // call getEvents()
 
     console.log("tags: ", event['tags']);
     console.log("keywords: ", event['keywords']);
@@ -100,6 +99,12 @@ $(document).ready(function () {
       $('#tags').val("");
     }
   });
+
+  // updates query as user makes event tag selections by clicking on the checkbox
+  $('.dropdown_tags input[type=checkbox').click(function () {
+      console.log("input: ", $(this).prop("checked"));
+});
+
 
   // updates query as user enters radius to search
   $('#radius').focus(function () {
