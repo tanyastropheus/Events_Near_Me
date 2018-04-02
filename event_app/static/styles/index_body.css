@@ -94,9 +94,39 @@ button, div.hours {
     border-radius: 4px;
     padding: 20px;
     width: 200px;
-    font-size: 16px;
+    font-size: 18px;
     font-family: 'Helvetica', 'Arial', sans-serif;
+    margin-top: auto;
 
+}
+
+.apply button{
+    font-size: 16px;
+    position: relative;
+    border-style: none;
+    width: 50px;
+    margin: auto;
+    padding: 0;
+}
+
+#cost-apply {
+    left: 160px;
+}
+
+#time-apply {
+    left: 80px;
+}
+
+.apply button:focus {
+    outline: none;
+}
+
+.apply button:hover {
+    color: #008489;
+}
+
+button, li {
+    cursor: pointer;
 }
 
 #cost-range {
@@ -115,7 +145,8 @@ ul.hours {
     border-radius: 4px;
     position: absolute;
     z-index: 1;
-    margin: 0;
+    margin-left: 35px;
+    margin-top: auto;
     list-style-type: none;
     padding: 10px 10px 20px 10px;
     font-family: "Helvetica", "Arial", sans-serif;

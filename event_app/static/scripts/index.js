@@ -155,7 +155,7 @@ $(document).ready(function () {
 
   // cost slider disappears when user moves mouse away
   // cost button is updated with cost display
-  $('.cost-slider').mouseleave(function () {
+  $('#cost-apply').click(function () {
     $('.cost-slider').hide();
     $('#cost').text($('#price').text());
     $('#cost').css({"background-color": "#f44271", "color": "white"});
@@ -196,7 +196,7 @@ $(document).ready(function () {
 
   // time dropdown disappears when user moves mouse away
   // time button is updated with times selected
-  $('.hours').mouseleave(function () {
+  $('#time-apply').click(function () {
     $('.hours').hide();
     if (event['time'].length === 3 || event['time'].length === 0) {
       $('#time').text("All Day");
