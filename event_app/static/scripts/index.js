@@ -22,11 +22,10 @@ $(document).ready(function () {
   });
 
   // dropdown menu hidden when user moves the mouse elsewhere
-/*
   $('.dropdown_tags').mouseleave(function () {
     $('.dropdown_tags').hide();
   });
-*/
+
   /* Event Keywords Input:
      1. Accept either user keywords or checked event tags.
      2. User keywords may be added at the end of event tags selection, in which
@@ -38,10 +37,7 @@ $(document).ready(function () {
 
   // updates query as user enters event keywords
   $('#tags').blur(function () {
-    console.log("blur happened");
-
     // if text input exists, clear all checked event tags
-    // will perform free text search
     if (typeof $('#tags').val() != 'undefined') {
       console.log("some input");
       event['keywords'] = $('form #tags').val();
@@ -62,6 +58,7 @@ $(document).ready(function () {
       // call getEvents()
     }
   });
+
 
   // updates query as user makes event tag selection by clicking on <li>
   $('.dropdown_tags li').click(function () {
@@ -101,14 +98,8 @@ $(document).ready(function () {
     }
   });
 
-  // updates query as user makes event tag selections by clicking on the checkbox
-  $('.dropdown_tags input[type=checkbox').click(function () {
-      console.log("input: ", $(this).prop("checked"));
-});
-
 
   // updates query as user enters radius to search
-  $('#radius').focus(function () {
     $('#radius').blur(function () {
       if (typeof $('#radius').val() != 'undefined') {   // if text input exists
 	event['radius'] = $('#radius').val();
@@ -118,10 +109,8 @@ $(document).ready(function () {
 	// call getEvents()
       }
     });
-  });
 
   // updates query as user enters location
-  $('#user_location').focus(function () {
     $('#user_location').blur(function () {
       if (typeof $('#user_location').val() != 'undefined') {   // if text input exists
 	event['user_location'] = $('#user_location').val();
@@ -131,7 +120,6 @@ $(document).ready(function () {
 	// call getEvents()
       }
     });
-  });
 
   // cost slider appears when user clicks on the cost button
   $('#cost').click(function () {
@@ -154,7 +142,7 @@ $(document).ready(function () {
   });
   $("#price").text("$" + $( "#cost-range" ).slider( "value" ) );
 
-  // cost slider disappears when user moves mouse away
+  // cost slider hides when user clicks on the Apply button
   // cost button is updated with cost display
   $('#cost-apply').click(function () {
     hideCost();
@@ -165,7 +153,7 @@ $(document).ready(function () {
     $('.hours').show();
   });
 
-  // update map as user makes time selection
+  // update query as user makes time selection
   $('.hours li').click(function () {
     timeSlot = this.children[0].children[0].dataset.name
 
@@ -229,6 +217,7 @@ function hideTime() {
 // hides Cost dropdown && update button with selected cost
 function hideCost() {
   $('.cost-slider').hide();
+  event['cost'] = $('#price').text().slice(1);
   $('#cost').text($('#price').text());
   $('#cost').css({"background-color": "#f44271", "color": "white"});
   // remove existing pins on the map

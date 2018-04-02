@@ -19,6 +19,11 @@ es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
 def main():
     return render_template('index.html')
 
+@app.route('/slider')
+def slider():
+    return render_template('test_slider.html')
+
+
 @app.route('/')
 def show_all():
     '''displays event data stored in ES'''
