@@ -99,27 +99,31 @@ $(document).ready(function () {
   });
 
 
-  // updates query as user enters radius to search
-    $('#radius').blur(function () {
-      if (typeof $('#radius').val() != 'undefined') {   // if text input exists
-	event['radius'] = $('#radius').val();
-	console.log(event['radius']);
-	// remove existing pins on the map
-	// call getAttrs()
-	// call getEvents()
+  // updates query after user inputs search radius
+  $('#radius').blur(function () {
+    saveRadius();
+  });
+
+  // updates query after user presses enter on radius
+  $('#radius').keypress(function (event) {
+    if (event.which == 13) {
+      console.log("radius submission!");
+      saveRadius();
       }
+  });
+
+  // updates query as user inputs location
+    $('#user_location').blur(function () {
+      saveLocation();
     });
 
-  // updates query as user enters location
-    $('#user_location').blur(function () {
-      if (typeof $('#user_location').val() != 'undefined') {   // if text input exists
-	event['user_location'] = $('#user_location').val();
-	console.log(event['user_location']);
-	// remove existing pins on the map
-	// call getAttrs()
-	// call getEvents()
-      }
-    });
+  // updates query after user presses enter on location
+  $('#user_location').keypress(function (event) {
+    if (event.which == 13) {
+      console.log("location submission!");
+      saveLocation();
+    }
+  });
 
   // cost slider appears when user clicks on the cost button
   $('#cost').click(function () {
@@ -226,4 +230,25 @@ function hideCost() {
   // remove existing pins on the map
   // call getAttrs()
   // call getEvents()
+}
+
+
+function saveRadius() {
+  if (typeof $('#radius').val() != 'undefined') {   // if text input exists
+    event['radius'] = $('#radius').val();
+    console.log(event['radius']);
+    // remove existing pins on the map
+    // call getAttrs()
+    // call getEvents()
+  }
+}
+
+function saveLocation() {
+  if (typeof $('#user_location').val() != 'undefined') {   // if text input exists
+    event['user_location'] = $('#user_location').val();
+    console.log(event['user_location']);
+    // remove existing pins on the map
+    // call getAttrs()
+    // call getEvents()
+  }
 }
