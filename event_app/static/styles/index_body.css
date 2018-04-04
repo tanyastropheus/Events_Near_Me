@@ -20,16 +20,11 @@ input::placeholder {
 }
 
 input#tags {
-    background-image: url('../images/search-icon.png');
-    background-repeat: no-repeat;
-    background-position: 98% 50%;
-    padding-right: 40px;
     width: 610px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
 }
-
 
 input#radius {
     width: 40px;

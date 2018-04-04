@@ -22,9 +22,11 @@ $(document).ready(function () {
   });
 
   // dropdown menu hidden when user moves the mouse elsewhere
+/*
   $('.dropdown_tags').mouseleave(function () {
     $('.dropdown_tags').hide();
   });
+*/
 
   /* Event Keywords Input:
      1. Accept either user keywords or checked event tags.
@@ -35,27 +37,18 @@ $(document).ready(function () {
      selection will be erased and replaced by the checked event tags.
   */
 
-  // updates query as user enters event keywords
+  // updates query after user presses enter on tag form input
+  $('#tags').keypress(function (event) {
+    if (event.which == 13) {
+      saveKeywords();
+    }
+  });
+
+  // updates query after user clicks outside form area
   $('#tags').blur(function () {
     // if text input exists, clear all checked event tags
     if (typeof $('#tags').val() != 'undefined') {
-      console.log("some input");
-      event['keywords'] = $('form #tags').val();
-      event['tags'] = [];
-
-     // uncheck all event tags
-      $('.dropdown_tags li').each(function () {
-	if ($(this).find("input").prop("checked")) {
-	  $(this).find("input").prop("checked", false);
-	}
-      });
-
-      console.log("keywords:", event['keywords']);
-      console.log("tags: ", event['tags']);
-
-      // remove existing pins on the map
-      // call getAttrs()
-      // call getEvents()
+      saveKeywords();
     }
   });
 
@@ -97,6 +90,7 @@ $(document).ready(function () {
       $('#tags').val("");
     }
   });
+
 
 
   // updates query after user inputs search radius
@@ -250,5 +244,29 @@ function saveLocation() {
     // remove existing pins on the map
     // call getAttrs()
     // call getEvents()
+  }
+}
+
+function uncheckAllTags() {
+  $('.dropdown_tags li').each(function () {
+    if ($(this).find("input").prop("checked")) {
+      $(this).find("input").prop("checked", false);
+    }
+  });
+}
+
+function saveKeywords() {
+  if (typeof $('#tags').val() != 'undefined') {
+    event['keywords'] = $('form #tags').val();
+    event['tags'] = [];
+
+    uncheckAllTags();
+
+    // remove existing pins on the map
+    // call getAttrs()
+    // call getEvents()
+
+    console.log("keywords:", event['keywords']);
+    console.log("tags: ", event['tags']);
   }
 }
