@@ -55,7 +55,7 @@ $(document).ready(function () {
 
   // updates query as user makes event tag selection by clicking on <li>
   $('.dropdown_tags li').click(function () {
-    eventTag = this.children[0].children[0].dataset.name
+    eventTag = this.children[0].dataset.name
     if (event['tags'].includes(eventTag) === false) {
 
       // add checked tags to array
@@ -153,7 +153,7 @@ $(document).ready(function () {
 
   // update query as user makes time selection
   $('.hours li').click(function () {
-    timeSlot = this.children[0].children[0].dataset.name
+    timeSlot = this.children[0].dataset.name
 
     if (event['time'].includes(timeSlot) === false) {
       // add checked time slot to array
