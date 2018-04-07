@@ -269,13 +269,13 @@ function getEvents() {
     url: 'http://0.0.0.0:5000/api/event_search',
     contentType: 'application/json',  // type of data sent to the server
     data: JSON.stringify(event),  // data to be sent to the server
-    dataType: 'json'.  // type of data expected from the server
+    dataType: 'json',  // type of data expected from the server
                        // jquery will auto convert json to JS object
     success: function (data) {
       // remove existing markers
       deleteMarkers();
       // populate page with new event markers
-      addMarkers();
+      addMarkers(data);
     }
   });
 }
@@ -307,7 +307,6 @@ function addMarkers(data) {
 	infowindow.open(map, markerObj);
 	}
     })(marker, i));
-    }
   }
 }
 
