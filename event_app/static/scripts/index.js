@@ -1,19 +1,16 @@
-// collect input from all form fields and save them to the event object
-//function getAttrs()
-
-// send event object to the backend & query corresponding events
-//function getEvents()
-
-
 let event = {
   keywords: "",
   tags: [],
   radius: 2,
   user_location: "San Francisco, CA",
-  cost: 0,  //upper bound of cost
+  cost: 20,  //upper bound of cost
   time: [],
   date: ""
-}
+};
+
+let markers = [];
+
+let map;
 
 $(document).ready(function () {
   // dropdown menu display upon clicking on Event Keywords form area
@@ -76,12 +73,12 @@ $(document).ready(function () {
 	$(this).find("input").prop("checked", false);
       }
     }
-      // remove existing pins on the map
-      // call getAttrs()
-      // call getEvents()
 
-    console.log("tags: ", event['tags']);
-    console.log("keywords: ", event['keywords']);
+    console.log(event);
+    getEvents();
+
+//    console.log("tags: ", event['tags']);
+//    console.log("keywords: ", event['keywords']);
 
     // display the checked tags in the Keyword search area
     if (event['tags'].length > 0) {
@@ -91,8 +88,6 @@ $(document).ready(function () {
     }
   });
 
-
-
   // updates query after user inputs search radius
   $('#radius').blur(function () {
     saveRadius();
@@ -101,7 +96,7 @@ $(document).ready(function () {
   // updates query after user presses enter on radius
   $('#radius').keypress(function (event) {
     if (event.which == 13) {
-      console.log("radius submission!");
+//      console.log("radius submission!");
       saveRadius();
       }
   });
@@ -114,7 +109,7 @@ $(document).ready(function () {
   // updates query after user presses enter on location
   $('#user_location').keypress(function (event) {
     if (event.which == 13) {
-      console.log("location submission!");
+//      console.log("location submission!");
       saveLocation();
     }
   });
@@ -197,7 +192,7 @@ $(document).ready(function () {
       hideTime();
     }
   });
-
+  console.log(event);
 });
 
 // hides Time dropdown && update button with selected time
@@ -209,9 +204,9 @@ function hideTime() {
     $('#time').text(event['time'].join(', '));
   }
   $('#time').css({"background-color": "#f44271", "color": "white"});
-  // remove existing pins on the map
-  // call getAttrs()
-  // call getEvents()
+
+  console.log(event);
+  getEvents();
 }
 
 
@@ -221,9 +216,8 @@ function hideCost() {
   event['cost'] = $('#price').text().slice(1);
   $('#cost').text($('#price').text());
   $('#cost').css({"background-color": "#f44271", "color": "white"});
-  // remove existing pins on the map
-  // call getAttrs()
-  // call getEvents()
+
+  getEvents();
 }
 
 
@@ -231,9 +225,9 @@ function saveRadius() {
   if (typeof $('#radius').val() != 'undefined') {   // if text input exists
     event['radius'] = $('#radius').val();
     console.log(event['radius']);
-    // remove existing pins on the map
-    // call getAttrs()
-    // call getEvents()
+
+    console.log(event);
+    getEvents();
   }
 }
 
@@ -241,9 +235,7 @@ function saveLocation() {
   if (typeof $('#user_location').val() != 'undefined') {   // if text input exists
     event['user_location'] = $('#user_location').val();
     console.log(event['user_location']);
-    // remove existing pins on the map
-    // call getAttrs()
-    // call getEvents()
+    getEvents();
   }
 }
 
@@ -262,11 +254,80 @@ function saveKeywords() {
 
     uncheckAllTags();
 
-    // remove existing pins on the map
-    // call getAttrs()
-    // call getEvents()
+    console.log(event);
+    getEvents();
 
-    console.log("keywords:", event['keywords']);
-    console.log("tags: ", event['tags']);
+//    console.log("keywords:", event['keywords']);
+//    console.log("tags: ", event['tags']);
   }
+}
+
+// send event object to the backend & query corresponding events
+function getEvents() {
+  $.ajax({
+    type: 'POST',
+    url: 'http://0.0.0.0:5000/api/event_search',
+    contentType: 'application/json',  // type of data sent to the server
+    data: JSON.stringify(event),  // data to be sent to the server
+    dataType: 'json'.  // type of data expected from the server
+                       // jquery will auto convert json to JS object
+    success: function (data) {
+      // remove existing markers
+      deleteMarkers();
+      // populate page with new event markers
+      addMarkers();
+    }
+  });
+}
+
+// create markers && add them to the map
+function addMarkers(data) {
+  // data is a dictionary of events
+  // {'id_1': {'cost': 20, 'address': '18th St', ...}, 'id_2': {'cost': 33, ...}}
+  let infoWindow = new google.maps.InfoWindow();
+  let marker, i;
+
+  // construct marker objects from event data from the server
+  for (i = 0; i < Object.keys(data).length; i++) {
+    marker = new google.maps.Marker({
+      position: new google.maps.LatLng(data[i].location.lat, data[i].location.lon),
+      map: map
+    });
+
+    markers.push(marker);
+
+    // info window display when marker is clicked
+    google.maps.event.addListener(marker, 'click', (function(markerObj, i) {
+      return function() {
+	infowindow.setContent('<h3><b>' + data[event_key].name + '</b></h3>'
+			      + '<p>Address: ' + data[event_key].address + '</p>'
+			      + '<p>Date: ' + data[event_key].date + '</p>'
+			      + '<p>Time: ' + data[event_key].time + '</p>'
+			      + '<p>Tags: ' + data[event_key].tags + '</p>');
+	infowindow.open(map, markerObj);
+	}
+    })(marker, i));
+    }
+  }
+}
+
+// delete all markers
+function deleteMarkers() {
+  // clear markers from the map
+  if (markers.length > 0) {
+    for (let marker of markers) {
+    marker.setMap(null);
+    }
+  }
+  // remove marker references from the array
+  markers = [];
+}
+
+
+// display map
+function initMap() {
+  map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 13,
+    center: {lat: 37.781715, lng:-122.408367} //Holberton Address. REVISIT
+  });
 }

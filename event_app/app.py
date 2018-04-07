@@ -2,7 +2,7 @@
 
 import requests, json
 from elasticsearch import Elasticsearch
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -18,33 +18,10 @@ es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
 @app.route('/index')
 def main():
     return render_template('index.html')
-
-@app.route('/slider')
-def slider():
-    return render_template('test_slider.html')
-
-
-@app.route('/')
-def show_all():
-    '''displays event data stored in ES'''
-    search_all = requests.get('http://localhost:9200/events/_search?pretty')
-    return search_all.content
-
-@app.route('/test')
-def test():
-    '''check that flask is up and serving the right webpages'''
-    return render_template('test.html')
-
-@app.route('/map')
-def display_map():
-    '''displays Google Map with Holberton school as the center view.  No pin'''
-    return render_template('test_add_map.html')
-
-@app.route('/map/geocoding')
-def geocoding():
-    '''test drop one pin based on hard-coded address'''
-    '''using geocode to convert address to long & lat'''
-    return render_template('test_geocoding.html')
+'''
+@app.route('/api/events_search', methods=['POST'])
+def events_search():
+'''
 
 @app.route('/api/all_events')
 def all_events():
@@ -71,6 +48,28 @@ def all_events_map():
     '''drop pins based on lat&lon from ES using test'''
     '''(index = event_test, doctype = practice)'''
     return render_template('test_all_from_DB.html')
+
+@app.route('/')
+def show_all():
+    '''displays event data stored in ES'''
+    search_all = requests.get('http://localhost:9200/events/_search?pretty')
+    return search_all.content
+
+@app.route('/test')
+def test():
+    '''check that flask is up and serving the right webpages'''
+    return render_template('test.html')
+
+@app.route('/map')
+def display_map():
+    '''displays Google Map with Holberton school as the center view.  No pin'''
+    return render_template('test_add_map.html')
+
+@app.route('/map/geocoding')
+def geocoding():
+    '''test drop one pin based on hard-coded address'''
+    '''using geocode to convert address to long & lat'''
+    return render_template('test_geocoding.html')
 
 # this is extra
 @app.route('/map/geo_detect')

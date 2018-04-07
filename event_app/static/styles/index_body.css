@@ -1,3 +1,8 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+
 .container1 {
     display: flex;
     font-family: "Helvetica", "Arial", sans-serif;
@@ -92,7 +97,7 @@ button, div.hours {
     font-size: 18px;
     font-family: 'Helvetica', 'Arial', sans-serif;
     margin-top: auto;
-
+    background-color: white;
 }
 
 .apply button{
@@ -143,6 +148,7 @@ ul.hours {
     padding: 10px 10px 20px 10px;
     font-family: "Helvetica", "Arial", sans-serif;
     font-size: 16px;
+    background-color: white;
 }
 
 ul.hours input {
@@ -157,4 +163,16 @@ ul.hours input {
 .hours li:hover {
     background-color: #DCDCDC;
     border-radius: 4px;
+}
+
+.mapwrap {
+    height: 765px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
 }

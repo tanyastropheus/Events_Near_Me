@@ -12,7 +12,6 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script type="text/javascript" src="/static/scripts/index.js"></script>
-    <script></script>
   </head>
 
   <body>
@@ -72,7 +71,6 @@
       </div>
     </div>
 
-
     <div class="container2">
       <section class="event-cost">
 	<button id="cost" type="button">Cost</button>
@@ -91,119 +89,7 @@
       <div class="time">
 	<button id="time" type="button">Time</button>
 	<ul class="hours">
-	  <li><input type="checkbox" data-name="Morning">Morning
-
-  
-    
-      
-  
-  
-    
-  
-  
-    
-      
-        
-          Copy card URL
-        
-      
-
-      
-      
-      
-        Convert to issue
-      
-
-    
-      Convert note to issue
-      
-  
-
-  
-
-  
-    Title
-    
-  
-  
-    Body
-    Dropdown menu does not automatically disappear when user click on other form input area without clicking on the apply button for the dropdown
-  
-
-  
-    
-      Convert to issue
-    
-  
-
-    
-
-    Edit note
-    
-    
-        
-        
-          Delete note
-        
-
-    
-  
-
-
-  
-    
-  
-
-  
-    
-      
-        Issue:
-Dropdown menu does not automatically disappear when user click on other form input area without clicking on the apply button for the dropdown
-      
-        
-          
-          Issue:
-Dropdown menu does not automatically disappear when user click on other form input area without clicking on the apply button for the dropdown
-    
-    Added by tanyastropheus
-  
-
-
-
-
-  
-  Edit note
-  
-    
-    
-      
-        Note
-      
-      
-        Issue:
-Dropdown menu does not automatically disappear when user click on other form input area without clicking on the apply button for the dropdown
-        
-      
-      
-        
-      
-    
-
-    
-      
-        Save note
-      
-    
-
-
-
-
-
-        Press enter to move this card
-    
-
-  
-</li>
+	  <li><input type="checkbox" data-name="Morning">Morning</li>
 	  <li><input type="checkbox" data-name="Afternoon">Afternoon</li>
 	  <li><input type="checkbox" data-name="Evening">Evening</li>
 	  <div>&nbsp;</div>
@@ -211,9 +97,19 @@ Dropdown menu does not automatically disappear when user click on other form inp
 	    <button id="time-apply" type="button">Apply</button>
 	  </div>
 	</ul>
+      </div>
     </div>
+
+    <div class="mapwrap">
+      <div id="map"></div>
+    </div>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkdExJFmcG7SqmXTp481KAieX82H4NjGY&callback=initMap">
+    </script>
 
     <footer>
     </footer>
+
+
   </body>
 </html>
