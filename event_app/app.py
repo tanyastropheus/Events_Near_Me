@@ -18,10 +18,81 @@ es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
 @app.route('/index')
 def main():
     return render_template('index.html')
-'''
-@app.route('/api/events_search', methods=['POST'])
+
+@app.route('/api/event_search', methods=['POST', 'GET'])
 def events_search():
-'''
+    """return events searched by the user"""
+    if request.get_json() is not None:
+        params = request.get_json()
+        geo_only_query = {
+            'geo_distance': {
+                'distance': params['radius'],
+                'location': {
+                    'lat': params['user_location']['lat'],
+                    'lon': params['user_location']['lng']
+                }
+            }
+        }
+
+        cost_only_query = {
+            'range': {
+                'cost': {
+                    'gte': 0, 'lte': params['cost']
+                }
+            }
+        }
+
+        event_tag_query = {
+            'terms': {
+                'tags': params['tags']
+            }
+        }
+
+        no_keyword_query = {   # need to implement date & time range
+            'query': {
+                'constant_score': {
+                    'filter': [
+                        event_tag_query,
+                        cost_query,
+                        geo_query
+                    ]
+                }
+            }
+        }
+
+        keywords_query = {   # need to implement date & time range
+            'query': {
+                'bool': {
+                    'must': {
+                        'match': {
+                            'keywords': params['keywords']
+                        }
+                    },
+                    'filter': {
+                        cost_query,
+                        geo_query
+                    }
+                }
+            }
+        }
+
+        if not params['keywords']:  # event tags only
+            if 'Any' in params['tags']:
+                # query all events that meet other search criteria
+                no_keyword_query['query']['constant_score']['filter'].remove(event_tag_query)
+                print(no_keyword_query)
+                data = es.search(index='event_test', doc_type='practice',
+                                 body=no_keyword_query)
+            else:
+                # query events matching tags
+                data = es.search(index='event_test', doc_type='practice',
+                                 body=no_keyword_query)
+        else: # keywords only
+            # full text search
+            data = es.search(index='event_test', doc_type='practice',
+                             body=keyword_query)
+        print(data)
+        return data
 
 @app.route('/api/all_events')
 def all_events():

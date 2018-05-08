@@ -1,8 +1,11 @@
 let event = {
   keywords: "",
   tags: [],
-  radius: 2,
-  user_location: "San Francisco, CA",
+  radius: "2mi",
+  user_location: {
+    lat: 37.7749300,  // default: San Francisco
+    lng:  -122.4194200
+  },
   cost: 20,  //upper bound of cost
   time: [],
   date: ""
@@ -198,7 +201,11 @@ $(document).ready(function () {
 // hides Time dropdown && update button with selected time
 function hideTime() {
   $('.hours').hide();
-  if (event['time'].length === 3 || event['time'].length === 0) {
+  if (event['time'].length === 0) {
+    event['time'].push("Morning", "Afternoon", "Evening");
+  }
+
+  if (event['time'].length === 3) {
     $('#time').text("All Day");
   } else {
     $('#time').text(event['time'].join(', '));
@@ -223,7 +230,7 @@ function hideCost() {
 
 function saveRadius() {
   if (typeof $('#radius').val() != 'undefined') {   // if text input exists
-    event['radius'] = $('#radius').val();
+    event['radius'] = $('#radius').val() + "mi";
     console.log(event['radius']);
 
     console.log(event);
@@ -233,10 +240,21 @@ function saveRadius() {
 
 function saveLocation() {
   if (typeof $('#user_location').val() != 'undefined') {   // if text input exists
-    event['user_location'] = $('#user_location').val();
+    userAddr = $('#user_location').val();
+    let geocoder = new google.maps.Geocoder();
+    geocodeAddress(geocoder, userAddr);
     console.log(event['user_location']);
     getEvents();
   }
+}
+
+function geocodeAddress(geocoder, address) {
+  geocoder.geocode({'address': address}, function (results, status) {
+    if (status === 'OK') {
+      event['user_location'].lat = results[0].geometry.location.lat();
+      event['user_location'].lng = results[0].geometry.location.lng();
+    }
+  });
 }
 
 function uncheckAllTags() {
@@ -272,10 +290,9 @@ function getEvents() {
     dataType: 'json',  // type of data expected from the server
                        // jquery will auto convert json to JS object
     success: function (data) {
-      // remove existing markers
-      deleteMarkers();
-      // populate page with new event markers
-      addMarkers(data);
+      console.log(data);
+      deleteMarkers();  // remove existing markers
+      addMarkers(data);  // populate page with new event markers
     }
   });
 }
