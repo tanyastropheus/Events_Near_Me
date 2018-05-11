@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 
 import requests, json
+import copy
+from pprint import pprint
 from elasticsearch import Elasticsearch
-from flask import Flask, render_template, jsonify, request
+from flask import abort, Flask, render_template, jsonify, request
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -20,79 +22,106 @@ def main():
     return render_template('index.html')
 
 @app.route('/api/event_search', methods=['POST', 'GET'])
-def events_search():
+def event_search():
     """return events searched by the user"""
-    if request.get_json() is not None:
-        params = request.get_json()
-        geo_only_query = {
-            'geo_distance': {
-                'distance': params['radius'],
-                'location': {
-                    'lat': params['user_location']['lat'],
-                    'lon': params['user_location']['lng']
-                }
+    if request.get_json() is None:
+        abort(404)
+
+    index_name = 'event_test'
+    doc_type_name = 'practice'
+    params = request.get_json()
+    geo_only_query = {
+        'geo_distance': {
+            'distance': params['radius'],
+            'location': {
+                'lat': params['user_location']['lat'],
+                'lon': params['user_location']['lng']
             }
         }
+    }
 
-        cost_only_query = {
-            'range': {
-                'cost': {
-                    'gte': 0, 'lte': params['cost']
-                }
+    cost_only_query = {
+        'range': {
+            'cost': {
+                'gte': 0, 'lte': params['cost']
             }
         }
+    }
 
-        event_tag_query = {
-            'terms': {
-                'tags': params['tags']
+    cost_geo_query =  {
+        'bool': {
+            'must': [
+                cost_only_query,
+                geo_only_query
+            ]
+        }
+    }
+
+    multi_match_query = {
+        'multi_match': {  # REVISIT: add boost to specific fields
+            'query': '',  # query strings to be matched from docs
+            'type': 'best_fields',  # the default; Finds documents which match any field, but uses the _score from the best field
+            'fields': '',
+            'fuzziness': 'AUTO'  # in case of user typo
+            # REVISIT: Set Analyzer for intelligently finding synonyms
+        }
+    }
+
+    event_query = {   # need to implement date & time range
+        'query': {
+            'bool': {
+                'must': multi_match_query,
+                'should': multi_match_query,
+                'filter': cost_geo_query
             }
         }
+    }
 
-        no_keyword_query = {   # need to implement date & time range
-            'query': {
-                'constant_score': {
-                    'filter': [
-                        event_tag_query,
-                        cost_query,
-                        geo_query
-                    ]
-                }
+    all_events_query = {
+        'query': {
+            'constant_score': {
+                'filter': cost_geo_query
             }
         }
+    }
 
-        keywords_query = {   # need to implement date & time range
-            'query': {
-                'bool': {
-                    'must': {
-                        'match': {
-                            'keywords': params['keywords']
-                        }
-                    },
-                    'filter': {
-                        cost_query,
-                        geo_query
-                    }
-                }
-            }
-        }
+    if not params['keywords']:  # event tags only
+        if 'Any' in params['tags']:
+            print("inside")
+            # query all events that meet other search criteria
+            data = es.search(index=index_name, doc_type=doc_type_name,
+                             body=all_events_query)
+        else:
+            # query events with matching tags
+            # must search matching strings from event tags (AND)
+            must_query = copy.deepcopy(multi_match_query)
+            tag_string = ""
+            for tag in params['tags']:
+                tag_string += tag + ' '
+            must_query['multi_match']['query'] = tag_string.strip()
+            must_query['multi_match']['fields'] = 'tags'
 
-        if not params['keywords']:  # event tags only
-            if 'Any' in params['tags']:
-                # query all events that meet other search criteria
-                no_keyword_query['query']['constant_score']['filter'].remove(event_tag_query)
-                print(no_keyword_query)
-                data = es.search(index='event_test', doc_type='practice',
-                                 body=no_keyword_query)
-            else:
-                # query events matching tags
-                data = es.search(index='event_test', doc_type='practice',
-                                 body=no_keyword_query)
-        else: # keywords only
-            # full text search
-            data = es.search(index='event_test', doc_type='practice',
-                             body=keyword_query)
-        print(data)
-        return data
+            # should also search match strings from event name (OR)
+            should_query = copy.deepcopy(multi_match_query)
+            should_query['multi_match']['query'] = tag_string.strip()
+            should_query['multi_match']['fields'] = 'name'
+
+            event_query['query']['bool']['must'] = must_query
+            event_query['query']['bool']['should'] = should_query
+            data = es.search(index=index_name, doc_type=doc_type_name,
+                             body=event_query)
+    else: # keywords only
+        # full text search
+        keywords_query = copy.deepcopy(multi_match_query)
+        keywords_query['multi_match']['query'] = params['keywords']
+        keywords_query['multi_match']['fields'] = ['name', 'tags']
+        event_query['query']['bool']['must'] = keywords_query
+        del event_query['query']['bool']['should']
+        data = es.search(index=index_name, doc_type=doc_type_name,
+                         body=event_query)
+
+    pprint(data)
+    return json.dumps(data)
 
 @app.route('/api/all_events')
 def all_events():

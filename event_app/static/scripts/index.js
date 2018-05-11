@@ -41,6 +41,7 @@ $(document).ready(function () {
   $('#tags').keypress(function (event) {
     if (event.which == 13) {
       saveKeywords();
+      $('.dropdown_tags').hide();
     }
   });
 
@@ -284,7 +285,7 @@ function saveKeywords() {
 function getEvents() {
   $.ajax({
     type: 'POST',
-    url: 'http://0.0.0.0:5000/api/event_search',
+    url: '/api/event_search',
     contentType: 'application/json',  // type of data sent to the server
     data: JSON.stringify(event),  // data to be sent to the server
     dataType: 'json',  // type of data expected from the server
@@ -305,6 +306,7 @@ function addMarkers(data) {
   let marker, i;
 
   // construct marker objects from event data from the server
+  // REVISIT: edge case when there is no event data
   for (i = 0; i < Object.keys(data).length; i++) {
     marker = new google.maps.Marker({
       position: new google.maps.LatLng(data[i].location.lat, data[i].location.lon),

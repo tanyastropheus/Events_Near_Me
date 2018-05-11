@@ -211,7 +211,7 @@ pprint(es.search(index='event_test', doc_type='practice',
 # combined queries
 geo_only_query = {
     'geo_distance': {
-        'distance': "2mi",
+        'distance': "100mi",
         'location': {
             'lat': 37.773972,
             'lon': -122.431297
@@ -228,7 +228,7 @@ geo_full_query = {
 cost_only_query = {
     'range': {
         'cost': {
-            'gte': 0, 'lte': 50
+            'gte': 0, 'lte': 1000
             }
     }
 }
@@ -248,12 +248,15 @@ event_tag_query = {
     }
 }
 
-event_full_query = {
+all_events_query = {
     'query': {
         'constant_score': {
             'filter': {
-                'terms': {
-                    'tags': ["art", "club"]
+                'bool': {
+                    'must': [
+                        cost_only_query,
+                        geo_only_query
+                    ]
                 }
             }
         }
@@ -294,7 +297,7 @@ no_keywords_query = {   # need to implement date & time range
 keywords_query = {   # need to implement date & time range
     'query': {
         'multi_match': {  # REVISIT: add boost to specific fields
-            'query': "concert",
+            'query': "Friday light",
             'type': 'best_fields',  # the default
             'fields': ['name', 'tags'],
             'fuzziness': 'AUTO'  # in case of user typo
@@ -303,15 +306,18 @@ keywords_query = {   # need to implement date & time range
     }
 }
 
+# this works!
 keywords_query_plus_filter = {   # need to implement date & time range
     'query': {
         'bool': {
             'must': {
                 'multi_match': {  # REVISIT: add boost to specific fields
-                    'query': "concert",
+                    'query': "Friday music",
                     'type': 'best_fields',  # the default
                     'fields': ['name', 'tags'],
                     'fuzziness': 'AUTO'  # in case of user typo
+                    # REVISIT: set minimum_should_match %
+                    # to display more relevant results
                     # REVISIT: Set Analyzer for intelligently finding synonyms
                 }
             },
@@ -328,7 +334,11 @@ keywords_query_plus_filter = {   # need to implement date & time range
 }
 
 print("All events containing the keywords:")
-pprint(es.search(index='event_test', doc_type='practice', body=no_keywords_query))
+del no_keywords_query['query']['bool']['must']
+del no_keywords_query['query']['bool']['should']
+
+pprint(no_keywords_query)
+pprint(es.search(index='event_test', doc_type='practice', body=keywords_query))
 
 '''
 # Getting specific field attribute values
