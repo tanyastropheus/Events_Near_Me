@@ -74,7 +74,8 @@ def event_search():
                 'should': multi_match_query,
                 'filter': cost_geo_query
             }
-        }
+        },
+        'min_score': 0.25
     }
 
     all_events_query = {
