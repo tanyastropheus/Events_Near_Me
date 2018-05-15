@@ -22,11 +22,9 @@ $(document).ready(function () {
   });
 
   // dropdown menu hidden when user moves the mouse elsewhere
-/*
   $('.dropdown_tags').mouseleave(function () {
     $('.dropdown_tags').hide();
   });
-*/
 
   /* Event Keywords Input:
      1. Accept either user keywords or checked event tags.
@@ -78,7 +76,7 @@ $(document).ready(function () {
       }
     }
 
-    console.log(event);
+    console.log("data sent to server: ", event);
     getEvents();
 
 //    console.log("tags: ", event['tags']);
@@ -196,7 +194,6 @@ $(document).ready(function () {
       hideTime();
     }
   });
-  console.log(event);
 });
 
 // hides Time dropdown && update button with selected time
@@ -273,7 +270,6 @@ function saveKeywords() {
 
     uncheckAllTags();
 
-    console.log(event);
     getEvents();
 
 //    console.log("keywords:", event['keywords']);
@@ -291,25 +287,33 @@ function getEvents() {
     dataType: 'json',  // type of data expected from the server
                        // jquery will auto convert json to JS object
     success: function (data) {
-      console.log(data);
+      console.log("data returned by server: ", data);
+      // events is an array of event dicts
+      // [{'_id': '4', '_index': 'event_test', '_score': 0.5754429,
+      // '_source': {'address': '210 Post St, San Francisco, ''CA',
+      // 'cost': 0, 'date': 'Fri Feb 9', 'location': {'lat': 37.7888664, 'lon': -122.4054461},
+      // 'name': 'Udo Nöger: The Inside of Light', 'tags': ['Arts'],
+      // 'time': '01:00pm'}, '_type': 'practice'}, {'_id': 2, ..}...]
+      events = data.hits.hits
       deleteMarkers();  // remove existing markers
-      addMarkers(data);  // populate page with new event markers
+      addMarkers(events);  // populate page with new event markers
     }
   });
 }
 
 // create markers && add them to the map
-function addMarkers(data) {
-  // data is a dictionary of events
+function addMarkers(events) {
+  // events is an array of event dicts.  See ajax
   // {'id_1': {'cost': 20, 'address': '18th St', ...}, 'id_2': {'cost': 33, ...}}
   let infoWindow = new google.maps.InfoWindow();
   let marker, i;
 
   // construct marker objects from event data from the server
   // REVISIT: edge case when there is no event data
-  for (i = 0; i < Object.keys(data).length; i++) {
+  for (i = 0; i < events.length; i++) {
     marker = new google.maps.Marker({
-      position: new google.maps.LatLng(data[i].location.lat, data[i].location.lon),
+      position: new google.maps.LatLng(events[i]._source.location.lat,
+				       events[i]._source.location.lon),
       map: map
     });
 
@@ -318,12 +322,12 @@ function addMarkers(data) {
     // info window display when marker is clicked
     google.maps.event.addListener(marker, 'click', (function(markerObj, i) {
       return function() {
-	infowindow.setContent('<h3><b>' + data[event_key].name + '</b></h3>'
-			      + '<p>Address: ' + data[event_key].address + '</p>'
-			      + '<p>Date: ' + data[event_key].date + '</p>'
-			      + '<p>Time: ' + data[event_key].time + '</p>'
-			      + '<p>Tags: ' + data[event_key].tags + '</p>');
-	infowindow.open(map, markerObj);
+	infoWindow.setContent('<h3><b>' + events[i]._source.name + '</b></h3>'
+			      + '<p>Address: ' + events[i]._source.address + '</p>'
+			      + '<p>Date: ' + events[i]._source.date + '</p>'
+			      + '<p>Time: ' + events[i]._source.time + '</p>'
+			      + '<p>Tags: ' + events[i]._source.tags + '</p>');
+	infoWindow.open(map, markerObj);
 	}
     })(marker, i));
   }
