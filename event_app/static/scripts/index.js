@@ -12,8 +12,8 @@ let event = {
 };
 
 let markers = [];
-
 let map;
+
 
 $(document).ready(function () {
   // dropdown menu display upon clicking on Event Keywords form area
@@ -105,14 +105,16 @@ $(document).ready(function () {
 
   // updates query as user inputs location
     $('#user_location').blur(function () {
-      saveLocation();
+      saveLocationGeo();
+      setUserMarker();
     });
 
   // updates query after user presses enter on location
   $('#user_location').keypress(function (event) {
     if (event.which == 13) {
 //      console.log("location submission!");
-      saveLocation();
+      saveLocationGeo();
+      setUserMarker();
     }
   });
 
@@ -236,21 +238,39 @@ function saveRadius() {
   }
 }
 
-function saveLocation() {
+function getLocationAddr() {
   if (typeof $('#user_location').val() != 'undefined') {   // if text input exists
     userAddr = $('#user_location').val();
-    let geocoder = new google.maps.Geocoder();
-    geocodeAddress(geocoder, userAddr);
-    console.log(event['user_location']);
-    getEvents();
+    return userAddr;
   }
 }
 
-function geocodeAddress(geocoder, address) {
+function saveLocationGeo() {
+  userAddr = getLocationAddr();
+  geocodeAddress(userAddr, function (geoAddr) {
+    event['user_location'].lat = geoAddr.lat;
+    event['user_location'].lng = geoAddr.lng;
+    getEvents();
+});
+}
+
+function setUserMarker() {
+  userAddr = getLocationAddr();
+  geocodeAddress(userAddr, function(geoAddr) {
+    let userMarker = new google.maps.Marker({
+      position: geoAddr,
+      map: map
+    });
+  });
+}
+
+function geocodeAddress(address, callback) {
+  let geocoder = new google.maps.Geocoder();
   geocoder.geocode({'address': address}, function (results, status) {
     if (status === 'OK') {
-      event['user_location'].lat = results[0].geometry.location.lat();
-      event['user_location'].lng = results[0].geometry.location.lng();
+      geoAddr = {lat: results[0].geometry.location.lat(),
+		 lng: results[0].geometry.location.lng()}
+      callback(geoAddr);
     }
   });
 }
@@ -352,4 +372,5 @@ function initMap() {
     zoom: 13,
     center: {lat: 37.781715, lng:-122.408367} //Holberton Address. REVISIT
   });
+  setUserMarker();
 }
