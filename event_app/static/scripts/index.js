@@ -263,10 +263,27 @@ function setUserMarker() {
     if (typeof userMarker != "undefined") {
       deleteUserMarker();
     }
+    let personIcon = {
+      url: '/static/images/personIcon.png',
+      scaledSize: new google.maps.Size(50, 54)
+    }
     userMarker = new google.maps.Marker({
       position: geoAddr,
-      map: map
+      map: map,
+      icon: personIcon
     });
+    setUserInfoWindow();
+  });
+}
+
+
+function setUserInfoWindow() {
+  let contentString = 'events near this location';
+  let userMarkerInfo = new google.maps.InfoWindow({
+    content: contentString
+  });
+  userMarker.addListener('click', function () {
+    userMarkerInfo.open(map, userMarker);
   });
 }
 
