@@ -254,14 +254,25 @@ function saveLocationGeo() {
 });
 }
 
+let userMarker;
 function setUserMarker() {
   userAddr = getLocationAddr();
   geocodeAddress(userAddr, function(geoAddr) {
-    let userMarker = new google.maps.Marker({
+    // if userMarker already exists, delete it
+    // then create a new marker for the updated location
+    if (typeof userMarker != "undefined") {
+      deleteUserMarker();
+    }
+    userMarker = new google.maps.Marker({
       position: geoAddr,
       map: map
     });
   });
+}
+
+function deleteUserMarker() {
+  userMarker.setMap(null);
+  userMarker = null;
 }
 
 function geocodeAddress(address, callback) {
