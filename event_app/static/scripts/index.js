@@ -263,6 +263,10 @@ function setUserMarker() {
     if (typeof userMarker != "undefined") {
       deleteUserMarker();
     }
+    // dynamically center map on updated user location
+    map.setCenter(geoAddr);
+
+    // drop user location pin
     let personIcon = {
       url: '/static/images/personIcon.png',
       scaledSize: new google.maps.Size(50, 54)
@@ -272,11 +276,11 @@ function setUserMarker() {
       map: map,
       icon: personIcon
     });
-    setUserInfoWindow();
+//    setUserInfoWindow();
   });
 }
 
-
+/*
 function setUserInfoWindow() {
   let contentString = 'events near this location';
   let userMarkerInfo = new google.maps.InfoWindow({
@@ -286,7 +290,7 @@ function setUserInfoWindow() {
     userMarkerInfo.open(map, userMarker);
   });
 }
-
+*/
 function deleteUserMarker() {
   userMarker.setMap(null);
   userMarker = null;
@@ -398,7 +402,7 @@ function deleteMarkers() {
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     zoom: 13,
-    center: {lat: 37.781715, lng:-122.408367} //Holberton Address. REVISIT
+    center: {lat: 37.7749300, lng: -122.4194200} //Holberton Address. REVISIT
   });
   setUserMarker();
 }
