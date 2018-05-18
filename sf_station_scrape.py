@@ -12,9 +12,9 @@ from pprint import pprint  # REVISIT: for debugging purpose only.
 es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
 doc_id = 0
 
-url = 'https://www.sfstation.com/'
-calendar = url + 'calendar/'
-page = requests.get(calendar)
+url = 'https://www.sfstation.com/{}'
+events_calendar = url.format('calendar/bay-area')
+page = requests.get(events_calendar)
 soup = BeautifulSoup(page.content, 'html.parser')
 
 # TESTING: have the same number of event entries as stored in Elasticsearch
@@ -25,6 +25,7 @@ events = []
 es.indices.delete(index='events')
 sys.exit()
 '''
+
 while True:
     # grab all event names and links on the page
     event_names = [name.text for name in soup.find_all('a', class_='url summary')]
@@ -33,7 +34,7 @@ while True:
     for i in range(len(event_names)):
         event = {}
         event['name'] = event_names[i]
-        event['link'] = url + event_links[i]
+        event['link'] = url.format(event_links[i])
 
         # following event link to get additional event info
         event_url = event['link']
