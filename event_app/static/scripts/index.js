@@ -93,6 +93,10 @@ $(document).ready(function () {
   // updates query after user inputs search radius
   $('#radius').blur(function () {
     saveRadius();
+    if (eventsCircle != 'undefined') {
+      deleteRadiusCircle();
+    }
+    setUserMarker();
   });
 
   // updates query after user presses enter on radius
@@ -100,12 +104,19 @@ $(document).ready(function () {
     if (event.which == 13) {
 //      console.log("radius submission!");
       saveRadius();
+      if (eventsCircle != 'undefined') {
+	deleteRadiusCircle();
+      }
+      setUserMarker();
       }
   });
 
   // updates query as user inputs location
     $('#user_location').blur(function () {
       saveLocationGeo();
+      if (eventsCircle != 'undefined') {
+	deleteRadiusCircle();
+      }
       setUserMarker();
     });
 
@@ -114,6 +125,9 @@ $(document).ready(function () {
     if (event.which == 13) {
 //      console.log("location submission!");
       saveLocationGeo();
+      if (eventsCircle != 'undefined') {
+	deleteRadiusCircle();
+      }
       setUserMarker();
     }
   });
@@ -228,14 +242,19 @@ function hideCost() {
 }
 
 
-function saveRadius() {
+function getRadius() {
   if (typeof $('#radius').val() != 'undefined') {   // if text input exists
-    event['radius'] = $('#radius').val() + "mi";
-    console.log(event['radius']);
-
-    console.log(event);
-    getEvents();
+    radius = $('#radius').val();
   }
+  return radius;
+}
+
+function saveRadius() {
+  radius = getRadius();
+  event['radius'] = radius + "mi";
+//    console.log(event['radius']);
+//    console.log(event);
+    getEvents();
 }
 
 function getLocationAddr() {
@@ -276,8 +295,33 @@ function setUserMarker() {
       map: map,
       icon: personIcon
     });
+    radiusCircle(geoAddr);
 //    setUserInfoWindow();
   });
+}
+
+function mileToMeters(mileDistance) {
+  mileToMeterConverter = 1609.34;
+  return mileDistance * mileToMeterConverter
+}
+
+let eventsCircle;
+function radiusCircle(geoAddr) {
+  eventsCircle = new google.maps.Circle({
+    strokeColor: '#cc5728',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#cc5728',
+    fillOpacity: 0.35,
+    map: map,
+    center: geoAddr,
+    radius: mileToMeters(getRadius())
+  });
+}
+
+function deleteRadiusCircle() {
+  eventsCircle.setMap(null);
+  eventsCircle = null;
 }
 
 /*
