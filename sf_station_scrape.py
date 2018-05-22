@@ -8,6 +8,83 @@ from bs4 import BeautifulSoup
 from elasticsearch import Elasticsearch
 from pprint import pprint  # REVISIT: for debugging purpose only.
 
+index = 'events'
+doc_type = 'info'
+
+def create_index(index, doc_type):
+    '''create empty index with customized setting & mapping'''
+    # customize analyzer for english stemming, possessives, and synonyms
+    english_synonym = {
+        "analysis": {
+            "filter": {
+                "english_stop": {
+                    "type": "stop",
+                    "stopwords":  "_english_"
+                },
+                "english_stemmer": {
+                    "type": "stemmer",
+                    "language": "english"
+                },
+                "english_possessive_stemmer": {
+                    "type": "stemmer",
+                    "language": "possessive_english"
+                },
+                "synonym": {  # set synonym filter with synonyms from WordNet
+                    "type": "synonym",
+                    "format": "wordnet",
+                    "synonyms_path": "analysis/wn_s.pl"
+                }
+            },
+            "analyzer": {
+                "english": {
+                    "tokenizer":  "standard",
+                    "filter": [
+                        "english_possessive_stemmer",
+                        "lowercase",
+                        "english_stop",
+                        "english_stemmer",
+                        "synonym"
+                    ]
+                }
+            }
+        }
+    }
+
+    # define mapping to allow geo point data type
+    mapping = {
+        "properties" : {
+            "address" : {"type" : "keyword"},
+            "location": {"type": "geo_point"},
+            "cost" : {"type" : "long"},
+            "date" : {"type" : "keyword"}, # REVISIT with date datatype
+            "link" : {"type" : "keyword"},
+            "name" : {"type" : "text", "analyzer": "english_synonym"},
+            "tags" : {"type" : "text", "analyzer": "english_synonym"},
+            "time" : {"type" : "keyword"}, # REVISIT
+            "image_url": {"type": "keyword"},
+            "description": {"type" : "text", "analyzer": "english_synonym"},
+            "venue": {"type": "keyword"}
+        }
+    }
+
+    setting = {
+        "settings": "english_synonym",
+        "mappings": {"event_info": mapping}
+    }
+
+    es.indices.create(index=index)
+    es.indices.put_mapping(index=index, doc_type=doc_type, body=setting)
+
+def delete_index(index):
+    '''delete existing index'''
+    if es.indices.exists(index=index):
+        es.indices.delete(index=index)
+        sys.exit()
+
+def store_docs(index, doc_type, doc_id, data):
+    '''store event data in designated index and doc_type'''
+    es.index(index=index, doc_type=doc_type, id=doc_id, body=data)
+
 # connect to ES server
 es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
 doc_id = 0
@@ -20,6 +97,9 @@ soup = BeautifulSoup(page.content, 'html.parser')
 # TESTING: have the same number of event entries as stored in Elasticsearch
 events = []
 
+'''
+delete_index(index)
+'''
 '''
 # TESTING: delete past indexes to start anew
 es.indices.delete(index='events')
@@ -80,8 +160,7 @@ while True:
         pprint(event)
         events.append(event)
 
-        # store event data in ES
-        es.index(index='events', doc_type='info', id=doc_id, body=event)
+        store_docs(index, doc_type, doc_id, event)
         doc_id += 1
 
     if soup.select('div#listingPagination > a')[-1].get_text() == 'Next »':
