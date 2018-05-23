@@ -421,7 +421,8 @@ function addMarkers(events) {
 	if (events[i]._source.cost == -1) {
 	  events[i]._source.cost = 'check event link'
 	}
-	infoWindow.setContent('<h3><b>' + events[i]._source.name + '</b></h3>'
+	infoWindow.setContent('<h3><b><a href=' + events[i]._source.link + '>'
+			      + events[i]._source.name + '</a></b></h3>'
 			      + '<p>Address: ' + events[i]._source.address + '</p>'
 			      + '<p>Date: ' + events[i]._source.date + '</p>'
 			      + '<p>Time: ' + events[i]._source.time + '</p>'
