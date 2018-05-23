@@ -93,7 +93,7 @@ $(document).ready(function () {
   // updates query after user inputs search radius
   $('#radius').blur(function () {
     saveRadius();
-    if (eventsCircle != 'undefined') {
+    if (searchCircle != 'undefined') {
       deleteRadiusCircle();
     }
     setUserMarker();
@@ -104,7 +104,7 @@ $(document).ready(function () {
     if (event.which == 13) {
 //      console.log("radius submission!");
       saveRadius();
-      if (eventsCircle != 'undefined') {
+      if (searchCircle != 'undefined') {
 	deleteRadiusCircle();
       }
       setUserMarker();
@@ -114,7 +114,7 @@ $(document).ready(function () {
   // updates query as user inputs location
     $('#user_location').blur(function () {
       saveLocationGeo();
-      if (eventsCircle != 'undefined') {
+      if (searchCircle != 'undefined') {
 	deleteRadiusCircle();
       }
       setUserMarker();
@@ -125,7 +125,7 @@ $(document).ready(function () {
     if (event.which == 13) {
 //      console.log("location submission!");
       saveLocationGeo();
-      if (eventsCircle != 'undefined') {
+      if (searchCircle != 'undefined') {
 	deleteRadiusCircle();
       }
       setUserMarker();
@@ -283,7 +283,7 @@ function setUserMarker() {
       deleteUserMarker();
     }
     // dynamically center map on updated user location
-    map.setCenter(geoAddr);
+    map.panTo(geoAddr);
 
     // drop user location pin
     let personIcon = {
@@ -305,9 +305,9 @@ function mileToMeters(mileDistance) {
   return mileDistance * mileToMeterConverter
 }
 
-let eventsCircle;
+let searchCircle;
 function radiusCircle(geoAddr) {
-  eventsCircle = new google.maps.Circle({
+  searchCircle = new google.maps.Circle({
     strokeColor: '#cc5728',
     strokeOpacity: 0.8,
     strokeWeight: 2,
@@ -320,8 +320,8 @@ function radiusCircle(geoAddr) {
 }
 
 function deleteRadiusCircle() {
-  eventsCircle.setMap(null);
-  eventsCircle = null;
+  searchCircle.setMap(null);
+  searchCircle = null;
 }
 
 /*
@@ -418,10 +418,14 @@ function addMarkers(events) {
     // info window display when marker is clicked
     google.maps.event.addListener(marker, 'click', (function(markerObj, i) {
       return function() {
+	if (events[i]._source.cost == -1) {
+	  events[i]._source.cost = 'check event link'
+	}
 	infoWindow.setContent('<h3><b>' + events[i]._source.name + '</b></h3>'
 			      + '<p>Address: ' + events[i]._source.address + '</p>'
 			      + '<p>Date: ' + events[i]._source.date + '</p>'
 			      + '<p>Time: ' + events[i]._source.time + '</p>'
+			      + '<p>Cost: ' + events[i]._source.cost + '</p>'
 			      + '<p>Tags: ' + events[i]._source.tags + '</p>');
 	infoWindow.open(map, markerObj);
 	}
