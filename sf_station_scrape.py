@@ -11,7 +11,7 @@ from pprint import pprint  # REVISIT: for debugging purpose only.
 index = 'events'
 doc_type = 'info'
 
-def create_index(index, doc_type):
+def create_index(index):
     '''create empty index with customized setting & mapping'''
     # customize analyzer for english stemming, possessives, and synonyms
     english_synonym = {
@@ -36,14 +36,14 @@ def create_index(index, doc_type):
                 }
             },
             "analyzer": {
-                "english": {
+                "english_synonym": {
                     "tokenizer":  "standard",
                     "filter": [
+                        "synonym",
                         "english_possessive_stemmer",
                         "lowercase",
                         "english_stop",
-                        "english_stemmer",
-                        "synonym"
+                        "english_stemmer"
                     ]
                 }
             }
@@ -68,12 +68,11 @@ def create_index(index, doc_type):
     }
 
     setting = {
-        "settings": "english_synonym",
-        "mappings": {"event_info": mapping}
+        "settings": english_synonym,
+        "mappings": {"info": mapping}
     }
 
-    es.indices.create(index=index)
-    es.indices.put_mapping(index=index, doc_type=doc_type, body=setting)
+    es.indices.create(index=index, body=setting)
 
 def delete_index(index):
     '''delete existing index'''
@@ -105,6 +104,9 @@ delete_index(index)
 es.indices.delete(index='events')
 sys.exit()
 '''
+
+delete_index(index)
+create_index(index)
 
 while True:
     # grab all event names and links on the page
@@ -151,6 +153,8 @@ while True:
                 cost_str= event_soup.find('dt', text=re.compile(r'Cost')).find_next('dd').text
                 cost = re.search('\d+', cost_str)
                 event['cost'] = int(cost.group(0))
+        elif event_soup.find('dt', text=re.compile(r'Cost')) is None:  # cost is not listed
+            event['cost'] = -1  # will translate to 'check event link'
         if event_soup.find('dt', text=re.compile(r'Tags')):
             tags = event_soup.find('dt', text=re.compile(r'Tags')).find_next('dd').text
             # save tages as a list of strings

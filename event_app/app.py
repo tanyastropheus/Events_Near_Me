@@ -10,6 +10,9 @@ from flask_cors import CORS
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+index_name = 'event_test'
+doc_type_name = 'event_info'
+
 # check ES is up and running
 res = requests.get('http://localhost:9200')
 print(res.status_code)
@@ -27,8 +30,6 @@ def event_search():
     if request.get_json() is None:
         abort(404)
 
-    index_name = 'event_test'
-    doc_type_name = 'practice'
     params = request.get_json()
     geo_only_query = {
         'geo_distance': {
@@ -43,16 +44,17 @@ def event_search():
     cost_only_query = {
         'range': {
             'cost': {
-                'gte': 0, 'lte': params['cost']
+                'gte': -1, 'lte': params['cost']
             }
         }
     }
 
+    # queries the specified cost & geo range,
+    # plus events that don't have listed cost
     cost_geo_query =  {
         'bool': {
             'must': [
-                cost_only_query,
-                geo_only_query
+                geo_only_query, cost_only_query
             ]
         }
     }
@@ -88,13 +90,18 @@ def event_search():
 
     if not params['keywords']:  # event tags only
         if 'Any' in params['tags']:
-            print("inside")
             # query all events that meet other search criteria
             data = es.search(index=index_name, doc_type=doc_type_name,
                              body=all_events_query)
         else:
             # query events with matching tags
             # must search matching strings from event tags (AND)
+            # DESIGN DECISION: instead of doing a binary keyword event tag search,
+            # will construct an event tag string and do full-text search
+            # because the event tags from the source websites are dynamically generated
+            # and the listed event tags from the app may not reflect the current tags
+            # full-text solves the issue of synonym event tags
+            # and tags like "Art" vs "Arts"
             must_query = copy.deepcopy(multi_match_query)
             tag_string = ""
             for tag in params['tags']:
@@ -127,21 +134,19 @@ def event_search():
 @app.route('/api/all_events')
 def all_events():
     '''return all event data from DB'''
-    # index name to be queried
-    idx_name = 'event_test'
-    doc = 'practice'
-
     # get total number of events
-    num_events = es.count(index=idx_name, doc_type=doc)['count']
+    num_events = es.count(index=index_name, doc_type=doc_type_name)['count']
 
     events = {}  # a dict of event dicts
-    i = 0
-    while i < num_events:
+    i = 1
+    while i <= num_events:
         event = {}  # {id: {'name': 'e_name', 'address': 'e_addr',...}}
-        event[i] = es.get(index=idx_name, doc_type=doc, id=str(i))['_source']
+        event[i] = es.get(index=index_name, doc_type=doc_type_name, id=str(i))['_source']
         events.update(event)
         i += 1
 
+    pprint(events)
+    print("num_events: ", num_events)
     return json.dumps(events)
 
 @app.route('/map/all')
