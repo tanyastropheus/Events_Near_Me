@@ -5,7 +5,8 @@
 
 events = [
     {"event1": {
-        "name": "DJ's Party!",
+        "name": "DJ's Party!",  # DJ's => DJ, s
+        # can also check synonym:  U.S. => United States/US
         "description": "Come party with the finest DJ's from the U.S.!",
         "tags": ["Dance", "Music", "Club"],
         "cost": 45,
@@ -21,8 +22,8 @@ events = [
         }
     }
  },
-    {"event2": {
-        "name": "Celebrating Grandma's 101st Birthday!",
+    {"event2": {  # can also check synonym: Grandma => grandmother
+        "name": "Celebrating Grandma's 101st Birthday!",  # Grandma's => Grandma, s
         "description": "How many people live up to 101 like grandma?!",
         "tags": ["Family/Children", "Community", "Food/Drinks"],
         "cost": 0,
@@ -39,7 +40,7 @@ events = [
     }
  },
     {"event3": {
-        "name": "He/She - the prnoun dilemma",
+        "name": "He/She - the prnoun dilemma",  # He/She => He, She
         "description": "Join us to learn how to properly address someone.",
         "tags": ["Workshop", "Discussion", "LGBTQ"],
         "cost": 10,
@@ -56,7 +57,7 @@ events = [
     }
  },
     {"event4": {
-        "name": "This is the time of dogs",
+        "name": "This is the time of dogs",  # dog's => dog, s
         "description": "Dog heaven - dog's treats, dog's dates, dog everything",
         "tags": ["Animal", "Family/Children"],
         "cost": 35,
@@ -73,8 +74,8 @@ events = [
     }
  },
     {"event5": {
-        "name": "Art-related, fun-filled Evening!",
-        "description": "Come discover your inner-self and inner-artist!",
+        "name": "Art-related, fun-filled Evening!",  # Art-related => Art, related
+        "description": "Come discover your inner-self and inner-artist!",  # inner-self => inner, self
         "tags": ["Arts/Performance", "Drinks"],
         "cost": 85,
         "address": "hidden",
@@ -91,7 +92,9 @@ events = [
  },
     {"event6": {
         "name": "Three Little Pigs",
-        "description": "Whatever happened to the three little pigs and Snow White's dwarfs?"
+        # White's => White, s
+        # can also check stemmer: dwarf => dwarfs
+        "description": "Whatever happened to the three little pigs and Snow White's dwarfs?",
         "tags": ["Literacy", "Story-Telling"],
         "cost": 0,
         "address": "hidden",
@@ -105,6 +108,5 @@ events = [
             "lon": 0.0
         }
     }
- },
-
+ }
 ]

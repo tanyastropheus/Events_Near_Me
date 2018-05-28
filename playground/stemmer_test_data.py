@@ -2,12 +2,12 @@
 # sleep => slept
 # fox => foxes
 # history => historians or historians => historian
-# United States => US
+
 
 events = [
     {"event1": {
-        "name": "Three Little Pigs that jump over the fence",
-        "description": "The phrase that paid",
+        "name": "Three Little Pigs that jump over the fence",  # pigs => pig
+        "description": "The phrase that paid",  # paid => pay
         "tags": ["Children", "Family", "Literacy"],
         "cost": 0,
         "address": "hidden",
@@ -23,8 +23,8 @@ events = [
     }
  },
     {"event2": {
-        "name": "Wanna make money waitressing?",
-        "description": "Paying customers, Listen up!",
+        "name": "Wanna make money waitressing?",  # wanna  => want; waitressing => waitress
+        "description": "Paying customers, Listen up!",  # listen => hear, paying => pay
         "tags": ["Lecture/Workshop", "Discussion"],
         "cost": 0,
         "address": "hidden",
@@ -40,7 +40,8 @@ events = [
     }
  },
     {"event3": {
-        "name": "For budding gardener who wants to dig deeper",
+        "name": "For budding gardener who wants to dig deeper",  # wants => want
+        # leaves => leaf; foxes => fox; tree => trees; ate => eat; grew => grow
         "description": "Leaves, foxes, trees, and anything that ate and grew",
         "tags": ["Outdoors", "Gardening"],
         "cost": 25,
@@ -57,8 +58,10 @@ events = [
     }
  },
     {"event4": {
-        "name":  "Sleeping beauty and me",
-        "description": "My story with Disney and how I came to hate it",
+        "name":  "Sleeping beauty and me",  # Sleeping => sleep; me => I/my
+        # eats => eat; hates => hate
+        # can also test synonym: hate => dislike/loathe
+        "description": "His mom eats pig and hates Disney",
         "tags": ["Discussion/Workshop"],
         "cost": 5,
         "address": "hidden",
@@ -74,8 +77,8 @@ events = [
     }
  },
     {"event5": {
-        "name": "Those creatures that once walked and slept the Earth",
-        "description": "Discover nature's secrets from historians.  Fast!",
+        "name": "Those creatures that once walked and slept the Earth",  # walked => walk; slept => sleep
+        "description": "Discover nature's secrets from natural historians.  Fast!",
         "tags": ["Nature", "Museum", "Workshop"],
         "cost": 30,
         "address": "hidden",
