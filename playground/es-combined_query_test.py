@@ -6,22 +6,26 @@ from pprint import pprint
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search, DocType
 
-'''
-# check ES is up and running
-res = requests.get('http://localhost:9200')
-print(res.content)
-'''
-
 # connect to ES server
 es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
-'''
-if es.indices.exists(index='event_test'):
-    es.indices.delete(index='event_test')
-    sys.exit()
-'''
-# customize analyzer for english stemming, possessives, and synonyms
-setting = {
-    "settings": {
+
+index = 'event_test'
+doc_type = 'event_info'
+
+def check_setup():
+    '''check ES is up and running'''
+    res = requests.get('http://localhost:9200')
+    print(res.content)
+
+def delete_index(index):
+    '''delete index if it exists'''
+    if es.indices.exist(index=index):
+        es.indices.delete(index=index)
+
+def create_index(index):
+    '''create empty index with customized setting & mapping'''
+    # customize analyzer for english stemming, possessives, and synonyms
+    english_synonym = {
         "analysis": {
             "filter": {
                 "english_stop": {
@@ -51,43 +55,111 @@ setting = {
                         "lowercase",
                         "english_stop",
                         "english_stemmer"
-
                     ]
                 }
             }
         }
-    },
-    "mappings": {
-        "event_info": {
-            "properties" : {  # defineA mapping to allow geo point data type
-                "address" : {"type" : "keyword"},
-                "location": {"type": "geo_point"},
-                "cost" : {"type" : "long"},
-                "date" : {"type" : "keyword"}, # REVISIT with date datatype
-                "link" : {"type" : "keyword"},
-                "name" : {"type" : "text", "analyzer": "english_synonym"},
-                "tags" : {"type" : "text", "analyzer": "english_synonym"},
-                "time" : {"type" : "keyword"}, # REVISIT
-                "image_url": {"type": "keyword"},
-                "description": {"type" : "text", "analyzer": "english_synonym"},
-                "venue": {"type": "keyword"}
-            }
+    }
+
+    # defineA mapping to allow geo point data type
+    mapping = {
+        "properties" : {
+            "address" : {"type" : "keyword"},
+            "location": {"type": "geo_point"},
+            "cost" : {"type" : "long"},
+            "date" : {"type" : "keyword"}, # REVISIT with date datatype
+            "link" : {"type" : "keyword"},
+            "name" : {"type" : "text", "analyzer": "english_synonym"},
+            "tags" : {"type" : "text", "analyzer": "english_synonym"},
+            "time" : {"type" : "keyword"}, # REVISIT
+            "image_url": {"type": "keyword"},
+            "description": {"type" : "text", "analyzer": "english_synonym"},
+            "venue": {"type": "keyword"}
         }
     }
-}
 
-
-'''
     setting = {
-    "settings": english_synonym,
-    "mappings": {"event_info": mapping}
+        "settings": english_synonym,
+        "mappings": {"event_info": mapping}
     }
-'''
-'''
-# create index with custom settings and mapping
-es.indices.create(index='event_test', body=setting)
+
+    # create index if it doesn't already exist
+    if not es.indices.exists(index=index):
+        es.indices.create(index=index, body=setting)
+
+def store_docs(index, doc_type, events):
+    '''store event data in elasticsearch.
+
+    Args:
+        events(list): a list of event data in dictionary form
+            e.g. [event1, event2...] where each event is a dict
+
+    Note: document id starts with 0
+    '''
+    i = 0
+    while i < len(events):
+        event = "event" + str(i + 1)
+        es.index(index=index, doc_type=doc_type, id=i, body=events[i][event])
+        i += 1
 
 
+def get_num_docs(index, doc_type):
+    '''return the number of docs saved in an index'''
+    if es.indices.exist(index=index):
+        num_docs = es.count(index=index, doc_type=doc_type)['count']
+        print("number of documents: ", num_docs)
+
+    return num_docs
+
+
+def addr_to_geo(index, doc_type, doc_id):
+    '''
+    Look up latitude & longitude based on address for the doc id specified.
+
+    Returns:
+        A dict of location in lat & lon.
+        e.g. {'doc': {'location': {'lat': lat, 'lon': lng}}}
+    '''
+    api_key = 'AIzaSyAgPeDFl_wsFFzBfmtG0HY77Z_UXYYsiOE'
+
+    addr = es.get(index=index, doc_type=doc_type, id=i)['_source']['address']
+    print(addr)
+    addr_lookup = {'address': addr, 'key': api_key}
+    addr_url = urllib.parse.urlencode(addr_lookup)
+    geo = requests.get('https://maps.googleapis.com/maps/api/geocode/json?{}'.format(addr_url))
+
+    if geo.status_code == 200:
+        lat = geo.json()['results'][0]['geometry']['location']['lat']
+        lng = geo.json()['results'][0]['geometry']['location']['lng']
+        geo_location = {'doc': {'location': {'lat': lat, 'lon': lng}}}
+        print(geo_location)
+        return geo_location
+    else:
+        print("geo request failed")
+        sys.exit()
+
+
+def save_geo(index, doc_type, doc_id, geo_location):
+    '''save the geo-coordinates to ES for the doc id specified'''
+    es.update(index=index, doc_type=doc_type, id=doc_id, body=geo_location)
+
+
+if __name__ == '__main__':
+    # delete existing index and create a new one to laod new data
+    delete_index(index=index)
+    create_index(index=index)
+
+    # store new data
+    store_docs(index=index, doc_type=doc_type, events)
+
+    # save data location in geo-coordinates
+    num_docs = get_num_docs(index=index, doc_type=doc_type)
+    i = 0
+    while i < num_docs:
+        geo = addr_to_geo(index=index, doc_type, i)
+        save_geo(index=index, doc_type=doc_type, i, geo)
+        i += 1
+'''
 # update mapping after index creation
 es.indices.put_mapping(index='event_test', doc_type='event_info', body=setting['mappings']['event_info'])
 '''
@@ -127,6 +199,7 @@ event2 = {
         "Clubs",
         "Music"
     ],
+    "cost": -1,
     "name" : "UHAUL SF ft. Koslov + China G",
     'location': {
         'lat': 0.0,
@@ -148,6 +221,7 @@ event3 = {
         "Festival / Fair"
     ],
     "name" : "CAAMFest 2018",
+    "cost": -1,
     'location': {
         'lat': 0.0,
         'lon': 0.0
@@ -185,6 +259,7 @@ event5 = {
     "image_url" : "https://cdn.sfstation.com/assets/images/events/0235/2350804/1526687883-2350804a_orig.jpg",
     "date" : "Fri May 18",
     "link" : "https://www.sfstation.com//paradise-belly-of-the-beast-e2350804",
+    "cost": -1,
     "tags" : [
         "Theater / Performance Arts"
     ],
@@ -212,22 +287,23 @@ event6 = {
         'lon': 0.0
     },
     "link" : "https://www.sfstation.com//the-color-purple-a-broadway-musical-e2349132",
-    "date" : "Fri May 18"
+    "date" : "Fri May 18",
+    "cost": -1
 }
 
 event7 = {
     "link" : "https://www.sfstation.com//cheaper-than-therapy-e2062971",
-    "cost" : 15,
     "date" : "Fri May 18",
     "name" : "Cheaper Than Therapy",
     "tags" : [
         "Comedy"
     ],
     "time" : "10pm",
-    "address" : "533 Sutter Street, San Francisco, CA",
+    "address" : "406 Clement Street, San Francisco, CA",
     "description" : "Come spend an intimate evening enjoying unadulterated stand-up comedy with some of the best comedians from the Bay Area and beyond at Cheaper Than Therapy. The show is every Thursday, Friday, and Saturday at 10pm and every Sunday at 7pm. You'll get a healthy dose of laughs at San Francisco's historic Shelton Theater. Come learn that laughter really is the best medicine.\n\nProduced by the formidable comedic trio of Eloisa Bravo, Scott Simpson, and Jon Allen, the show offers you an evening of great stand-up comedy, as well as access to a wide variety of reasonably priced alcoholic beverages. \n\nCheck in with the box office downstairs when you arrive. The bar opens at 9pm and the show starts at 10pm, so come early for cheap drinks and great seats. While everyone is welcome at the theater, the show is really only appropriate for mature audiences, so 18 and up is strongly advised due to the adult nature of the material. Hey, it is stand-up comedy after all.\n\nAfter the show, everyone over 21 is encouraged to come to an after party at the neighborhood bar.\n\nWebsite: http://cttcomedy.com\nTickets: https://cttcomedy.eventbrite.com\nYelp: https://bit.ly/cttyelp\nFacebook: https://fb.me/cttcomedy\nInstagram: https://instagram.com/cttcomedy\n\nEloisa Bravo has performed at the Punch Line, the Purple Onion, Cobb's and Rooster T. Feathers, as well as Palm Beach, Miami, and Hollywood improv shows. She has won several comedy competitions in the San Francisco Bay Area and performed at many festivals and showcases. \n\nJon Allen has performed at the Punch Line in San Francisco, Cap City Comedy Club in Austin, Texas, and regularly performs in venues throughout the New York City area. Allen's work has appeared in Wired Magazine, Tech Crunch, Savage Henry, and The Rachel Maddow Blog, in addition to his numerous physics publications. You can find him on Twitter at https://twitter.com/mathturbator.\n\nScott Simpson has performed at SF Sketchfest, the Punch Line in San Francisco, the Bridgetown Comedy Festival, and the North American Comedy and Music Festival. Simpson's show \"You Look Nice Today\" has received the Podcast Award for Best Comedy Podcast and his jokes can be found on the illustrious twitter at https://twitter.com/scottsimpson.\n\nEach week, Jon, Eloisa, and Scott are joined by the three of the best comics from the Bay Area and beyond to bring you a fresh, exciting ~75 minutes of stand-up comedy. The bar opens at 9pm on Thursday through Saturday and 6pm on Sundays, so come out early and have a few drinks before the show starts.\n",
     "image_url" : "https://cdn.sfstation.com/assets/images/events/0206/2062971/1490895613-2062971a_orig.png",
     "venue" : "Shelton Theater",
+    "cost": -1,
     'location': {
         'lat': 0.0,
         'lon': 0.0
@@ -254,15 +330,7 @@ event8 = {
     }
 }
 
-# store event data using elasticsearch
-es.index(index='event_test', doc_type='event_info', id=1, body=event1)
-es.index(index='event_test', doc_type='event_info', id=2, body=event2)
-es.index(index='event_test', doc_type='event_info', id=3, body=event3)
-es.index(index='event_test', doc_type='event_info', id=4, body=event4)
-es.index(index='event_test', doc_type='event_info', id=5, body=event5)
-es.index(index='event_test', doc_type='event_info', id=6, body=event6)
-es.index(index='event_test', doc_type='event_info', id=7, body=event7)
-es.index(index='event_test', doc_type='event_info', id=8, body=event8)
+
 
 '''
 # query data with specific tags
@@ -439,26 +507,3 @@ pprint(es.get(index='event_test', doc_type='event_info', id=1))
 pprint(es.count(index='event_test', doc_type='event_info')['count'])
 pprint(es.get(index='event_test', doc_type='event_info', id=1)['_source']['address'])
 '''
-# Look up longitude & latitude based on address && save it to ES
-api_key = 'AIzaSyAgPeDFl_wsFFzBfmtG0HY77Z_UXYYsiOE'
-num_docs = es.count(index='event_test', doc_type='event_info')['count']
-print("number of documents: ", num_docs)
-
-i = 1
-while i <= num_docs:
-    addr = es.get(index='event_test', doc_type='event_info', id=i)['_source']['address']
-    print(addr)
-    addr_lookup = {'address': addr, 'key': api_key}
-    addr_url = urllib.parse.urlencode(addr_lookup)
-    geo = requests.get('https://maps.googleapis.com/maps/api/geocode/json?' + addr_url)
-
-    if geo.status_code == 200:
-        lat = geo.json()['results'][0]['geometry']['location']['lat']
-        lng = geo.json()['results'][0]['geometry']['location']['lng']
-        location = {'doc': {'location': {'lat': lat, 'lon': lng}}}
-        print(location)
-        es.update(index='event_test', doc_type='event_info', id=i, body=location)
-    else:
-        print("geo request failed")
-        sys.exit()
-    i += 1
