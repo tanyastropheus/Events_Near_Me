@@ -11,6 +11,8 @@ function initMap() {
     dataType: 'json',
     type: 'GET',
     success: function(data){
+      console.log("success!");
+      // data = {'id': {'cost': 20, 'address': '18th St', ...}}
       var infowindow = new google.maps.InfoWindow();
 
       var marker, i;
@@ -20,6 +22,7 @@ function initMap() {
           map: map
         });
 
+	// info window display when marker is clicked
 	google.maps.event.addListener(marker, 'click', (function(markerObj, event_key) {
           return function() {
             infowindow.setContent('<h3><b>' + data[event_key].name + '</b></h3>'
