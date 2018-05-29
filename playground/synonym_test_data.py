@@ -1,10 +1,10 @@
 # Testing the synonym analyzer for event name, description, and tags
 # US => United States
-
-events = [
+[
     {"event1": {
-        "name": "Is United States doomed?",  # US => United States
-        "description": "US-UK relationships on international politics",
+        # US => United States
+        "name": "Is United States doomed?",
+        "description": "Our relationships on international politics",
         "tags": ["Workshop", "Discussion"],
         "cost": 5,
         "address": "hidden",
@@ -20,7 +20,8 @@ events = [
     }
  },
     {"event2": {
-        "name": "Secrets into the adult industry",  # adult => men/women
+        # adult => men/women
+        "name": "Secrets into the adult industry",
         "description": "Shhh!",
         "tags": ["Adult", "Entertainnment"],
         "cost": 40,
@@ -37,7 +38,9 @@ events = [
     }
  },
     {"event3": {
-        "name": "White rabbits jump, brown foxes run",  # jump => hop/leap
+        # baby => child
+        # can also test stemmer: baby => babies
+        "name": "It's a baby!",
         "description": "Explore the allegory",
         "tags": ["Theater",  "Acting"],
         "cost": 65,
@@ -54,8 +57,10 @@ events = [
     }
  },
     {"event4": {
-        "name": "Paleness and the hidden myth to hopping",   # pale => white
-        "description": "Fun, puzzles, and riddles for men and women!",  # fun => interesting
+        # pale => white; children => babies
+        "name": "Paleness and the hidden myth to children",
+        # fun => interesting
+        "description": "Fun, puzzles, and riddles for men and women!",
         "tags": ["Food", "Drinks", "Show"],
         "cost": 35,
         "address": "hidden",
@@ -71,7 +76,8 @@ events = [
     }
  },
     {"event5": {
-        "name": "Mystery dinner crawl and other interesting things",  # mystery => puzzle/myth/riddle
+        # mystery => puzzle/myth/riddle
+        "name": "Mystery dinner crawl and other interesting things",
         "description": "Experience the life of a detective!",
         "tags": ["Entertainment", "Food/Drinks", "Performance Arts"],
         "cost": 55,

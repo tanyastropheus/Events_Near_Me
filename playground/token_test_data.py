@@ -3,9 +3,10 @@
 # and/or => and, or
 # ever-lasting => ever, lasting
 
-events = [
+[
     {"event1": {
-        "name": "DJ's Party!",  # DJ's => DJ, s
+        # DJ's => DJ, s
+        "name": "DJ's Party!",
         # can also check synonym:  U.S. => United States/US
         "description": "Come party with the finest DJ's from the U.S.!",
         "tags": ["Dance", "Music", "Club"],
@@ -22,8 +23,10 @@ events = [
         }
     }
  },
-    {"event2": {  # can also check synonym: Grandma => grandmother
-        "name": "Celebrating Grandma's 101st Birthday!",  # Grandma's => Grandma, s
+    {"event2": {
+        # can also check synonym: Grandma => grandmother
+        # Grandma's => Grandma, s
+        "name": "Celebrating Grandma's 101st Birthday!",
         "description": "How many people live up to 101 like grandma?!",
         "tags": ["Family/Children", "Community", "Food/Drinks"],
         "cost": 0,
@@ -40,7 +43,8 @@ events = [
     }
  },
     {"event3": {
-        "name": "He/She - the prnoun dilemma",  # He/She => He, She
+        # He/She => He, She
+        "name": "He/She - the pronoun dilemma",
         "description": "Join us to learn how to properly address someone.",
         "tags": ["Workshop", "Discussion", "LGBTQ"],
         "cost": 10,
@@ -57,8 +61,9 @@ events = [
     }
  },
     {"event4": {
-        "name": "This is the time of dogs",  # dog's => dog, s
-        "description": "Dog heaven - dog's treats, dog's dates, dog everything",
+        # dog's => dog, s
+        "name": "This is the time of dogs",
+        "description": "heaven - treats, dates, everything",
         "tags": ["Animal", "Family/Children"],
         "cost": 35,
         "address": "hidden",
@@ -74,8 +79,10 @@ events = [
     }
  },
     {"event5": {
-        "name": "Art-related, fun-filled Evening!",  # Art-related => Art, related
-        "description": "Come discover your inner-self and inner-artist!",  # inner-self => inner, self
+        # Art-related => Art, related
+        "name": "Art-related, fun-filled Evening!",
+        # inner-self => inner, self
+        "description": "Come discover your inner-self and inner-artist!",
         "tags": ["Arts/Performance", "Drinks"],
         "cost": 85,
         "address": "hidden",
