@@ -50,6 +50,7 @@ def create_index(index):
                     "tokenizer":  "standard",
                     "filter": [
                         "synonym",  # does not work as well
+                        "asciifolding",  # for accents
                         "english_possessive_stemmer",
                         "lowercase",
                         "english_stop",
