@@ -28,11 +28,10 @@ class TestTokenizer(unittest.TestCase):
         self.assertCountEqual(db.get_tokens("tokenizer", "standard", text), expected)
 
     def test_abbreviation(self):
-        text = "It's me: I'm just chillin'.  Plz don't tell_anyone"
+        text = "It's me: we're going'.  We'll don't tell_anyone I'm"
         # tokenizer does NOT break words by '_'
         # tell_anyone => tell_anyone
-        expected = ["It's", "me", "I'm", "just", "chillin", "Plz", "don't",
-                    "tell_anyone"]
+        expected = ["It's", "me", "we're", "We'll", "going", "I'm", "don't", "tell_anyone"]
         self.assertCountEqual(db.get_tokens("tokenizer", "standard", text), expected)
 
     def test_nonletter(self):
