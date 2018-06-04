@@ -35,6 +35,7 @@ class DB():
             "analyzer": {
                 "english_synonym": {
                     "tokenizer":  "standard",
+                    "char_filter": ['html_strip'], # strips '\n' in description field
                     "filter": [
                         "synonym",
                         "asciifolding",  # for accents
@@ -52,7 +53,6 @@ class DB():
         self.index = index
         self.doc_type = doc_type
         self.es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
-
 
     def create_index(self):
         '''create empty index with customized setting & mapping'''
@@ -80,7 +80,37 @@ class DB():
         }
         self.es.indices.create(index=self.index, body=setting)
 
+    """
+    def view_tokens(events, field, proc_type, proc_name):
+        '''
+        Print a list of tokens based on the analyzer/tokenizer chosen.
 
+        Args:
+            events (list of dicts): events
+            field (str): field of the event to be tokenized
+            proc_type (str): "analyzer" or "tokenizer"
+            proc_name (str): name of the proc_type
+        '''
+
+        body = {
+            proc_type: proc_name,
+            "text": ""
+        }
+
+        print('{}: {}'.format(proc_type, proc_name))
+        for i in range(len(events)):
+            text = events[i]['event' + str(i + 1)][field]
+            body['text'] = text
+            print(text)
+            results = es.indices.analyze(index=index, body=body)
+            print("tokens: ")
+
+            tokens = []
+            for j in range(len(results['tokens'])):
+                tokens.append(results['tokens'][j]['token'])
+
+            pprint(tokens)
+    """
     def get_tokens(self, anal_type, anal_name, text, index=None):
         ''''
         Return a list of tokens based on the standard tokenizer.
@@ -101,20 +131,23 @@ class DB():
             tokens.append(results['tokens'][i]['token'])
         return tokens
 
+    def get_settings(self, name):
+        '''get settings for the index'''
+        self.es.indices.get_settings(index=self.index, name=name)
 
     def delete_index(self):
         '''delete existing index'''
         if self.es.indices.exists(index=self.index):
             self.es.indices.delete(index=self.index)
 
-
     def store_doc(self, doc_id, data):
         '''store event data in designated index and doc_type'''
         self.es.index(index=self.index, doc_type=self.doc_type, id=doc_id, body=data)
 
-
-    def search_multi(self, q_string, q_multi=True):
+    def search(self, query):
         '''search index for docs that match query string'''
+        # will pass the query to the function instead of setting inside the function
+        '''
         multi_query = {
             'query': {
                 'multi_match': {
@@ -137,14 +170,15 @@ class DB():
                 }
             }
         }
+
         print("query:", q_string)
 
         if q_multi == True:
             body = multi_query
         else:
             body = single_query
-
-        results = self.es.search(index=self.index, doc_type=self.doc_type, body=multi_query)
+        '''
+        results = self.es.search(index=self.index, doc_type=self.doc_type, body=query)
         pprint(results)
 
 
