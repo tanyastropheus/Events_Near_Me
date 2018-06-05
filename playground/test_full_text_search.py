@@ -2,20 +2,6 @@ import sys, unittest, time, json
 sys.path.append('..')
 from elasticsearch import Elasticsearch
 from event_app.db import DB
-from pprint import pprint
-
-"""
-plan:
-- upload test data to test db
-- change query string
-  - fuzziness
-  - query multiple fields specified
-  - query possessives
-  - query synonym
-  - query stemmer
-  - query accents
-- check if corresponding docs are returned
-"""
 
 db = DB('test_search', 'test_doc')
 filename = 'test_data/test_data.txt'
@@ -110,7 +96,6 @@ class TestFullTextSearch(unittest.TestCase):
 
         self.query['query']['multi_match']['query'] = "beutiful"
         results = db.search(self.query)
-        pprint(results)
         self.assertEqual(TestFullTextSearch.get_doc_list(results), ['4', '1'])
 
         # This query returns no result; ES only supports fuzziness of 2
@@ -161,7 +146,7 @@ class TestFullTextSearch(unittest.TestCase):
         # check "Food/Drinks" also return results containing  "Food", "Drink"
         self.query['query']['multi_match']['query'] = "Food/Drinks Performance Arts"
         results = db.search(self.query)
-        self.assertEqual(self.get_doc_list(results), ['4', '3', '2'])
+        self.assertEqual(self.get_doc_list(results), ['4', '2', '3'])
 
         # mixing keyword with tag string
         self.query['query']['multi_match']['query'] = "Dance Club salsa"
@@ -227,19 +212,21 @@ class TestFullTextSearch(unittest.TestCase):
         self.assertEqual(self.get_doc_list(results), ['2', '0', '1'])
 
 
-"""
-    def test_bestfield():
-        '''test best field algorithm'''
+    def test_html_stripper(self):
+        '''
+        Check that html stripping filter applies to both the query string and
+        the indexed docs.
+        '''
+        # query words with html tags in the doc
+        self.query['query']['multi_match']['query'] = "circus ticket"
+        results = db.search(self.query)
+        self.assertEqual(self.get_doc_list(results), ['2', '4'])
 
-    def test_multiword_query():
+        # query with html tags
+        self.query['query']['multi_match']['query'] = "politician <br> \ngala\n"
+        results = db.search(self.query)
+        self.assertEqual(self.get_doc_list(results), ['1', '0'])
 
-    def test_multifield():
-        '''query words in multiple fields'''
 
-
-    def test_html_stripper():
-        '''query a word with html tag in query, see if will match non-html data.
-        reverse.'''
-"""
 if __name__ == "__main__":
     unittest.main()
