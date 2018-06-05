@@ -41,11 +41,11 @@ class TestFilter(unittest.TestCase):
         db.english_synonym['analysis']['analyzer']['english_synonym']['filter'] = ['english_possessive_stemmer']
         db.create_index()
 
-        text = "It's me: we're going'.  We'll don't tell_anyone I'm"
+        text = "It's he's: we're going'.  We'll don't tell_anyone I'm"
         # tokenizer does NOT break words by '_'
         # tell_anyone => tell_anyone
-        # filter treats "It's" as possessive -> "It"
-        expected = ["It", "me", "we're", "going", "We'll", "I'm", "don't", "tell_anyone"]
+        # filter treats "It's" as possessive -> "It", "he's" -> "he"
+        expected = ["It", "he", "we're", "going", "We'll", "I'm", "don't", "tell_anyone"]
         self.assertCountEqual(db.get_tokens("analyzer", "english_synonym", text,
                                             'test_filter'), expected)
 
@@ -99,14 +99,20 @@ class TestFilter(unittest.TestCase):
 
     def test_char_filter(self):
         '''test that char filter will strip "\n" at the end'''
-        db.english_synonym['analysis']['analyzer']['english_synonym']['filter'] = []
+        db.english_synonym['analysis']['analyzer']['english_synonym']['filter'] = ['english_possessive_stemmer']
         db.english_synonym['analysis']['analyzer']['english_synonym']['char_filter'] = ['html_strip']
         db.create_index()
 
         text = "Bitter Melon\nOrigin Story\nAunt Lily’s (Closing Night)\n\n\n"
-        expected = ["bitter", "Melon", "Orgin", "Story", "Aunt", "Lily's", "Closing", "Night"]
-        self.assertNotEqual(db.get_tokens("analyzer", "english_synonym", text,
+        expected = ["Bitter", "Melon", "Origin", "Story", "Aunt", "Lily", "Closing", "Night"]
+        self.assertEqual(db.get_tokens("analyzer", "english_synonym", text,
                                             'test_filter'), expected)
+
+        text = "Simpson's show \"You Look Nice Today\" has received"
+        expected = ["Simpson", "show", "You", "Look", "Nice", "Today", "has", "received"]
+        self.assertEqual(db.get_tokens("analyzer", "english_synonym", text,
+                                            'test_filter'), expected)
+
         print("char filter:", db.get_tokens("analyzer", "english_synonym", text, 'test_filter'))
 
 if __name__ == "__main__":
