@@ -20,7 +20,7 @@
     {"event2": {
         # adult => men/women
         "name": "Beautiful, secret rôles into the adult industry",
-        "description": "Shhh!",
+        "description": "\n\n\n\nHighlights from this year's program include:\n\n\nGala Presentations:\n\nAn American Hero: \n\n\n",
         "tags": ["Adult", "Entertainnment", "Dance"],
         "cost": 40,
         "address": "hidden",
@@ -39,7 +39,7 @@
         # baby => child
         # can also test stemmer: baby => babies
         "name": "It's a baby!  Friday salsa with Pedro",
-        "description": "Explore the allegory",
+        "description": "Color Purple gives new meaning to musical theatre as a performance medium.\n\nThe Color Purple Tickets\nOrpheum Theatre Tickets\nThings To Do In San Francisco\n",
         "tags": ["Theater",  "Acting", "Art"],
         "cost": 65,
         "address": "hidden",
@@ -76,7 +76,7 @@
     {"event5": {
         # mystery => puzzle/myth/riddle
         "name": "Wanna get mystery dinner at Amy's?",
-        "description": "Sleeping Beauty wanted: Experience the 'simple'life of foxes!",
+        "description": "Sleeping Beauty wanted: Experience the 'simple'life of foxes!  Queer Circus presents\n\nPARADISE: Belly of the Beast\n\nTopsy-Turvy Queer \nCircus\n",
         "tags": ["Entertainment", "Food/Drinks", "Performance Arts"],
         "cost": 55,
         "address": "hidden",
