@@ -179,7 +179,7 @@ class DB():
             body = single_query
         '''
         results = self.es.search(index=self.index, doc_type=self.doc_type, body=query)
-        pprint(results)
+        return results
 
 
     def get_num_docs(self):
