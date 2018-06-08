@@ -18,36 +18,6 @@ event = {
     "date": ""
 }
 
-def DBsearch_side_effect(query):
-    '''returns different values based on the input query receiveed'''
-    # search for all events
-    if 'constant_score' in query['query']:
-        """
-        print("received: Any")
-        pprint(query)
-        """
-        return {'Music': 'a', 'Family': 'b', 'Workshop': 'c'}
-
-    # search for event tags
-    elif query['query']['bool']['must']['multi_match']['fields'] == 'tags' and\
-    query['query']['bool']['should']['multi_match']['fields'] == 'name':
-        """
-        print("received: tags")
-        pprint(query)
-        """
-        return {'Music': 'a', 'Family': 'b'}
-
-    # search for event keywords
-    elif query['query']['bool']['must']['multi_match']['fields'] == ['name', 'tags']:
-        """
-        print("received: keywords")
-        pprint(query)
-        """
-        return {'Music': 'Beetles Anniversary'}
-    else:
-        return {'error': 'does not exist'}
-
-
 class EventEndPoint(unittest.TestCase):
     '''testing the logic of the event search Flask endpoint'''
     def setUp(self):
@@ -56,10 +26,134 @@ class EventEndPoint(unittest.TestCase):
         event['keywords'] = ""
         event['tags'] = []
 
+
+    @staticmethod
+    def DBsearch_side_effect(query):
+        '''returns different values based on the input query receiveed'''
+        all_events = {
+            'query': {
+                'constant_score': {
+                    'filter': {
+                        'bool': {
+                            'must': [
+                                {'geo_distance': {
+                                    'distance': '2mi',
+                                    'location': {
+                                        'lat': 37.77493,
+                                        'lon': -122.41942
+                                    }
+                                }
+                             },
+                                {'range': {
+                                    'cost': {
+                                        'gte': -1,
+                                        'lte': 20
+                                    }
+                                }
+                             }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+
+        event_tags = {
+            'query': {
+                'bool': {
+                    'filter': {
+                        'bool': {
+                            'must': [
+                                {'geo_distance': {
+                                    'distance': '2mi',
+                                    'location': {
+                                        'lat': 37.77493,
+                                        'lon': -122.41942}}},
+                                {'range': {
+                                    'cost': {
+                                        'gte': -1,
+                                        'lte': 20
+                                    }
+                                }
+                             }
+                            ]
+                        }
+                    },
+                    'must': {
+                        'multi_match': {
+                            'fields': 'tags',
+                            'fuzziness': 'AUTO',
+                            'query': 'Festival/Fair Museums Theater',
+                            'type': 'best_fields'
+                        }
+                    },
+                    'should': {
+                        'multi_match': {
+                            'fields': 'name',
+                            'fuzziness': 'AUTO',
+                            'query': 'Festival/Fair Museums Theater',
+                            'type': 'best_fields'
+                        }
+                    }
+                }
+            }
+        }
+
+        event_keywords = {
+            'query': {
+                'bool': {
+                    'filter': {
+                        'bool': {
+                            'must': [
+                                {'geo_distance': {
+                                    'distance': '2mi',
+                                    'location': {'lat': 37.77493,
+                                                 'lon': -122.41942
+                                             }
+                                }
+                             },
+                                {'range': {
+                                    'cost': {
+                                        'gte': -1,
+                                        'lte': 20
+                                    }
+                                }
+                             }
+                            ]
+                        }
+                    },
+                    'must': {
+                        'multi_match': {
+                            'fields': ['name', 'tags'],
+                            'fuzziness': 'AUTO',
+                            'query': 'Beetles Concert SF',
+                            'type': 'best_fields'
+                        }
+                    }
+                }
+            }
+        }
+
+        # search for all events
+        if query == all_events:
+            return {'Music': 'a', 'Family': 'b', 'Workshop': 'c'}
+
+        # search for event tags
+        elif query == event_tags:
+            return {'Music': 'a', 'Family': 'b'}
+
+            # search for event keywords
+        elif query == event_keywords:
+            return {'Music': 'Beetles Anniversary'}
+
+        else:
+            return {'error': 'does not exist'}
+
+
     @patch('event_app.app.DB.search')
     def test_search_all(self, mock_DB_search):
         ''''Check that  "Any" event tag generates query for all events'''
-        mock_DB_search.side_effect = DBsearch_side_effect
+        mock_DB_search.side_effect = EventEndPoint.DBsearch_side_effect
 
         # data sent from the front end to be parsed and queried
         event['tags'] = ["Any"]
@@ -77,7 +171,7 @@ class EventEndPoint(unittest.TestCase):
     @patch('event_app.app.DB.search')
     def test_event_tags(self, mock_DB_search):
         '''Check that selected event tags generate appropriate query'''
-        mock_DB_search.side_effect = DBsearch_side_effect
+        mock_DB_search.side_effect = EventEndPoint.DBsearch_side_effect
 
         # data sent from the front end to be parsed and queried
         event['tags'] = ["Festival/Fair", "Museums", "Theater"]
@@ -95,7 +189,7 @@ class EventEndPoint(unittest.TestCase):
     @patch('event_app.app.DB.search')
     def test_event_keywords(self, mock_DB_search):
         '''Check that event keywords generate appropriate query'''
-        mock_DB_search.side_effect = DBsearch_side_effect
+        mock_DB_search.side_effect = EventEndPoint.DBsearch_side_effect
 
         # data sent from the front end to be parsed and queried
         event['keywords'] = "Beetles Concert SF"
