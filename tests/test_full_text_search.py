@@ -3,7 +3,7 @@ sys.path.append('..')
 from elasticsearch import Elasticsearch
 from event_app.db import DB
 
-db = DB('test_search', 'test_doc')
+db = DB('test_fulltext_search', 'test_doc')
 filename = 'test_data/test_data.txt'
 
 def load_data_from_file(filename):
