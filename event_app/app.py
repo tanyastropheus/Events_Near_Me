@@ -2,6 +2,7 @@
 
 import requests, json
 import copy
+from event_app.db import DB
 from pprint import pprint
 from elasticsearch import Elasticsearch
 from flask import abort, Flask, render_template, jsonify, request
@@ -10,16 +11,15 @@ from flask_cors import CORS
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-index_name = 'event_test'
-doc_type_name = 'event_info'
+db = DB('event_test', 'event_info')
 
 # check ES is up and running
 res = requests.get('http://localhost:9200')
 print(res.status_code)
-
+'''
 # connect to ES server
 es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
-
+'''
 @app.route('/index')
 def main():
     return render_template('index.html')
@@ -91,8 +91,9 @@ def event_search():
     if not params['keywords']:  # event tags only
         if 'Any' in params['tags']:
             # query all events that meet other search criteria
-            data = es.search(index=index_name, doc_type=doc_type_name,
-                             body=all_events_query)
+            body = all_events_query
+ #           data = es.search(index=index_name, doc_type=doc_type_name,
+ #                            body=all_events_query)
         else:
             # query events with matching tags
             # must search matching strings from event tags (AND)
@@ -106,6 +107,8 @@ def event_search():
             tag_string = ""
             for tag in params['tags']:
                 tag_string += tag + ' '
+
+            # strip space at the end of tag_string
             must_query['multi_match']['query'] = tag_string.strip()
             must_query['multi_match']['fields'] = 'tags'
 
@@ -116,8 +119,10 @@ def event_search():
 
             event_query['query']['bool']['must'] = must_query
             event_query['query']['bool']['should'] = should_query
-            data = es.search(index=index_name, doc_type=doc_type_name,
-                             body=event_query)
+
+            body = event_query
+#            data = es.search(index=index_name, doc_type=doc_type_name,
+#                             body=event_query)
     else: # keywords only
         # full text search
         keywords_query = copy.deepcopy(multi_match_query)
@@ -125,10 +130,12 @@ def event_search():
         keywords_query['multi_match']['fields'] = ['name', 'tags']
         event_query['query']['bool']['must'] = keywords_query
         del event_query['query']['bool']['should']
-        data = es.search(index=index_name, doc_type=doc_type_name,
-                         body=event_query)
+        body = event_query
+#        data = es.search(index=index_name, doc_type=doc_type_name,
+#                         body=event_query)
 
-    pprint(data)
+    data = db.search(body)
+#    pprint(data)
     return json.dumps(data)
 
 @app.route('/api/all_events')
