@@ -4,7 +4,7 @@ index = 'events'
 doc_type = 'info'
 '''
 
-import requests
+import requests, urllib
 from elasticsearch import Elasticsearch
 from pprint import pprint  # REVISIT: for debugging purpose only.
 
@@ -131,10 +131,6 @@ class DB():
             tokens.append(results['tokens'][i]['token'])
         return tokens
 
-    def get_settings(self, name):
-        '''get settings for the index'''
-        self.es.indices.get_settings(index=self.index, name=name)
-
     def delete_index(self):
         '''delete existing index'''
         if self.es.indices.exists(index=self.index):
@@ -191,7 +187,7 @@ class DB():
         return num_docs
 
 
-    def addr_to_geo(doc_id):
+    def addr_to_geo(self, doc_id):
         '''
         Look up latitude & longitude based on address for the doc id specified.
 
@@ -199,19 +195,19 @@ class DB():
             A dict of location in lat & lon.
             e.g. {'doc': {'location': {'lat': lat, 'lon': lng}}}
         '''
-        api_key = 'AIzaSyAgPeDFl_wsFFzBfmtG0HY77Z_UXYYsiOE'
+        api_key = 'AIzaSyDMZ83GsgwA4MGa52utHcrdwufwdE6aCDc'
 
-        addr = self.es.get(index=self.index, doc_type=self.doc_type, id=i)['_source']['address']
-        print(addr)
+        addr = self.es.get(index=self.index, doc_type=self.doc_type, id=doc_id)['_source']['address']
+#        print(addr)
         addr_lookup = {'address': addr, 'key': api_key}
         addr_url = urllib.parse.urlencode(addr_lookup)
         geo = requests.get('https://maps.googleapis.com/maps/api/geocode/json?{}'.format(addr_url))
-
+        geo.connection.close()
         if geo.status_code == 200:
             lat = geo.json()['results'][0]['geometry']['location']['lat']
             lng = geo.json()['results'][0]['geometry']['location']['lng']
             geo_location = {'doc': {'location': {'lat': lat, 'lon': lng}}}
-            print(geo_location)
+#            print(geo_location)
             return geo_location
         else:
             print("geo request failed")
