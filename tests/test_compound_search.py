@@ -7,37 +7,6 @@ from pprint import pprint
 db = DB('test_compound_search', 'test_compound_doc')
 filename = 'test_data/test_data.txt'
 
-def load_data_from_file(filename):
-    '''read data from test data file.
-
-    Returns:
-       List of event dicts.
-    '''
-    text = ""
-    with open(filename) as f:
-        for line in f:
-            li = line.strip()
-            if not li.startswith('#'):
-                text += line
-    events = json.loads(text, strict=False)
-    return events
-
-def store_docs(events):
-    '''store event data in elasticsearch.
-
-    Args:
-        events(list): a list of event data in dictionary form
-            e.g. [event1, event2...] where each event is a dict
-
-    Note: document id starts with 0
-    '''
-    i = 0
-    while i < len(events):
-        event = "event" + str(i + 1)
-        db.store_doc(i, events[i][event])
-        i += 1
-
-
 
 class TestCompoundSearch(unittest.TestCase):
     '''
@@ -49,8 +18,8 @@ class TestCompoundSearch(unittest.TestCase):
         db.create_index()
 
         # save test data from file to the database
-        events = load_data_from_file(filename)
-        store_docs(events)
+        events = TestCompoundSearch.load_data_from_file(filename)
+        TestCompoundSearch.store_docs(events)
 
         # allow time for Elasticsearch server to store all data
         time.sleep(3)
@@ -81,6 +50,39 @@ class TestCompoundSearch(unittest.TestCase):
             for doc in results['hits']['hits']:
                 doc_list.append(doc['_id'])
         return doc_list
+
+
+    @staticmethod
+    def load_data_from_file(filename):
+        '''read data from test data file.
+
+        Returns:
+            List of event dicts.
+        '''
+        text = ""
+        with open(filename) as f:
+            for line in f:
+                li = line.strip()
+                if not li.startswith('#'):
+                    text += line
+        events = json.loads(text, strict=False)
+        return events
+
+    @staticmethod
+    def store_docs(events):
+        '''store event data in elasticsearch.
+
+        Args:
+            events(list): a list of event data in dictionary form
+                          e.g. [event1, event2...] where each event is a dict
+
+        Note: document id starts with 0
+        '''
+        i = 0
+        while i < len(events):
+            event = "event" + str(i + 1)
+            db.store_doc(i, events[i][event])
+            i += 1
 
 
     def test_geo_cost(self):
