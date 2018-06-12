@@ -234,10 +234,16 @@ function hideTime() {
 // hides Cost dropdown && update button with selected cost
 function hideCost() {
   $('.cost-slider').hide();
-  event['cost'] = $('#price').text().slice(1);
+  // set ultra-high cost max if user selects '100+'
+  if ($('#price').text().slice(1) === '100+') {
+    event['cost'] = 10000;
+  } else {
+    event['cost'] = $('#price').text().slice(1);
+  }
   $('#cost').text($('#price').text());
   $('#cost').css({"background-color": "#f44271", "color": "white"});
 
+  console.log(event);
   getEvents();
 }
 
