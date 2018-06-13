@@ -21,11 +21,16 @@ event = {
 class EventEndPoint(unittest.TestCase):
     '''testing the logic of the event search Flask endpoint'''
     def setUp(self):
+        '''set up Flask test client'''
         event_app.app.app.config['TESTING'] = True
         self.app = event_app.app.app.test_client()
+
+    def tearDown(self):
+        '''re-initialize event data'''
         event['keywords'] = ""
         event['tags'] = []
-
+        event['cost'] = 20
+        event['radius'] = "2mi"
 
     @staticmethod
     def DBsearch_side_effect(query):
@@ -132,7 +137,8 @@ class EventEndPoint(unittest.TestCase):
 
         # data sent from the front end to be parsed and queried
         event['tags'] = ["Any"]
-
+        print("datat sent")
+        pprint(event)
         response = self.get_data(event)
         self.assertTrue(response.status_code == 200)
         self.assertEqual(json.loads(response.data.decode()),
@@ -203,7 +209,7 @@ class EventEndPoint(unittest.TestCase):
         self.assertTrue(response.status_code == 200)
         self.assertEqual(json.loads(response.data.decode()),
                          {'Music': 'a', 'Family': 'b', 'Workshop': 'c'})
-    """
+
 
     @patch('event_app.app.DB.search')
     def test_radius(self, mock_DB_search):
@@ -239,7 +245,7 @@ class EventEndPoint(unittest.TestCase):
         event['radius'] = "8ne48*%@4mi"
         response = self.get_data(event)
         self.assertTrue(response.status_code == 404)
-    """
+
 
 if __name__ == "__main__":
     unittest.main()
