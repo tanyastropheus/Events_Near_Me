@@ -116,14 +116,12 @@ def event_search():
         data = {}
 
 
-    data = db.search(body)
-    '''
     try:
         data = db.search(body)
     except UnboundLocalError:
         print("exception")
         pass
-    '''
+
     return json.dumps(data)
 
 @app.route('/api/all_events')
