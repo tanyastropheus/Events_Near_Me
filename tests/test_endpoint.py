@@ -30,6 +30,8 @@ class EventEndPoint(unittest.TestCase):
     @staticmethod
     def DBsearch_side_effect(query):
         '''returns different values based on the input query receiveed'''
+        print("query received")
+        pprint(query)
         all_events = {
             'query': {
                 'constant_score': {
@@ -37,7 +39,7 @@ class EventEndPoint(unittest.TestCase):
                         'bool': {
                             'must': [
                                 {'geo_distance': {
-                                    'distance': '2mi',
+                                    'distance': "",
                                     'location': {
                                         'lat': 37.77493,
                                         'lon': -122.41942
@@ -47,59 +49,18 @@ class EventEndPoint(unittest.TestCase):
                                 {'range': {
                                     'cost': {
                                         'gte': -1,
-                                        'lte': 20
-                                    }
-                                }
-                             }
-                        ]
-                    }
-                }
-            }
-        }
-    }
-
-        event_tags = {
-            'query': {
-                'bool': {
-                    'filter': {
-                        'bool': {
-                            'must': [
-                                {'geo_distance': {
-                                    'distance': '2mi',
-                                    'location': {
-                                        'lat': 37.77493,
-                                        'lon': -122.41942}}},
-                                {'range': {
-                                    'cost': {
-                                        'gte': -1,
-                                        'lte': 20
+                                        'lte': 0
                                     }
                                 }
                              }
                             ]
                         }
-                    },
-                    'must': {
-                        'multi_match': {
-                            'fields': 'tags',
-                            'fuzziness': 'AUTO',
-                            'query': 'Festival/Fair Museums Theater',
-                            'type': 'best_fields'
-                        }
-                    },
-                    'should': {
-                        'multi_match': {
-                            'fields': 'name',
-                            'fuzziness': 'AUTO',
-                            'query': 'Festival/Fair Museums Theater',
-                            'type': 'best_fields'
-                        }
                     }
                 }
             }
         }
 
-        event_keywords = {
+        event_query = {
             'query': {
                 'bool': {
                     'filter': {
@@ -109,7 +70,7 @@ class EventEndPoint(unittest.TestCase):
                                     'distance': '2mi',
                                     'location': {'lat': 37.77493,
                                                  'lon': -122.41942
-                                             }
+                                              }
                                 }
                              },
                                 {'range': {
@@ -124,30 +85,44 @@ class EventEndPoint(unittest.TestCase):
                     },
                     'must': {
                         'multi_match': {
-                            'fields': ['name', 'tags'],
+                            'fields': ['name', 'description', 'tags'],
                             'fuzziness': 'AUTO',
-                            'query': 'Beetles Concert SF',
-                            'type': 'best_fields'
+                            'query': '',
+                            'analyzer': 'english_synonym'
                         }
                     }
                 }
             }
         }
+        if 'constant_score' in query['query']:
+            radius = query['query']['constant_score']['filter']['bool']['must'][0]['geo_distance']['distance']
+            max_cost = query['query']['constant_score']['filter']['bool']['must'][1]['range']['cost']['lte']
+            all_events['query']['constant_score']['filter']['bool']['must'][0]['geo_distance']['distance'] = radius
+            all_events['query']['constant_score']['filter']['bool']['must'][1]['range']['cost']['lte'] = max_cost
+
+        else:
+            query_string = query['query']['bool']['must']['multi_match']['query']
+            event_query['query']['bool']['must']['multi_match']['query'] = query_string
 
         # search for all events
         if query == all_events:
             return {'Music': 'a', 'Family': 'b', 'Workshop': 'c'}
 
-        # search for event tags
-        elif query == event_tags:
-            return {'Music': 'a', 'Family': 'b'}
-
             # search for event keywords
-        elif query == event_keywords:
+        elif query == event_query:
             return {'Music': 'Beetles Anniversary'}
 
         else:
             return {'error': 'does not exist'}
+
+
+    def get_data(self, event):
+        '''send test data from the front end to the endpoint'''
+        response = self.app.post(
+            '/api/event_search',
+            data=json.dumps(event),
+            content_type='application/json')
+        return response
 
 
     @patch('event_app.app.DB.search')
@@ -158,11 +133,7 @@ class EventEndPoint(unittest.TestCase):
         # data sent from the front end to be parsed and queried
         event['tags'] = ["Any"]
 
-        response = self.app.post(
-            '/api/event_search',
-            data=json.dumps(event),
-            content_type='application/json')
-
+        response = self.get_data(event)
         self.assertTrue(response.status_code == 200)
         self.assertEqual(json.loads(response.data.decode()),
                          {'Music': 'a', 'Family': 'b', 'Workshop': 'c'})
@@ -176,14 +147,10 @@ class EventEndPoint(unittest.TestCase):
         # data sent from the front end to be parsed and queried
         event['tags'] = ["Festival/Fair", "Museums", "Theater"]
 
-        response = self.app.post(
-            '/api/event_search',
-            data=json.dumps(event),
-            content_type='application/json')
-
+        response = self.get_data(event)
         self.assertTrue(response.status_code == 200)
         self.assertEqual(json.loads(response.data.decode()),
-                         {'Music': 'a', 'Family': 'b'})
+                         {'Music': 'Beetles Anniversary'})
 
 
     @patch('event_app.app.DB.search')
@@ -194,15 +161,85 @@ class EventEndPoint(unittest.TestCase):
         # data sent from the front end to be parsed and queried
         event['keywords'] = "Beetles Concert SF"
 
-        response = self.app.post(
-            '/api/event_search',
-            data=json.dumps(event),
-            content_type='application/json')
-
+        response = self.get_data(event)
         self.assertTrue(response.status_code == 200)
         self.assertEqual(json.loads(response.data.decode()),
                          {'Music': 'Beetles Anniversary'})
 
+
+    @patch('event_app.app.DB.search')
+    def test_cost(self, mock_DB_search):
+        '''check that endpoint validates cost range input'''
+        mock_DB_search.side_effect = EventEndPoint.DBsearch_side_effect
+        event['tags'] = ['Any']
+
+        event['cost'] = "100+"
+        response = self.get_data(event)
+        self.assertTrue(response.status_code == 200)
+        self.assertEqual(json.loads(response.data.decode()),
+                         {'Music': 'a', 'Family': 'b', 'Workshop': 'c'})
+
+        event['cost'] = 0
+        response = self.get_data(event)
+        self.assertTrue(response.status_code == 200)
+        self.assertEqual(json.loads(response.data.decode()),
+                         {'Music': 'a', 'Family': 'b', 'Workshop': 'c'})
+
+        event['cost'] = -140.45
+        response = self.get_data(event)
+        self.assertTrue(response.status_code == 404)
+
+        '''should I worry about this?
+        event['cost'] = 0827428
+        response = self.get_data(event)
+        self.assertTrue(response.status_code == 404)
+        '''
+        event['cost'] = "2de42&&*("
+        response = self.get_data(event)
+        self.assertTrue(response.status_code == 404)
+
+        event['cost'] = 17.3987175083922340920230712370238939128349014
+        response = self.get_data(event)
+        self.assertTrue(response.status_code == 200)
+        self.assertEqual(json.loads(response.data.decode()),
+                         {'Music': 'a', 'Family': 'b', 'Workshop': 'c'})
+    """
+
+    @patch('event_app.app.DB.search')
+    def test_radius(self, mock_DB_search):
+        '''check that endpoint validates radius input'''
+        mock_DB_search.side_effect = EventEndPoint.DBsearch_side_effect
+        event['tags'] = ['Any']
+
+        event['radius'] = "-3mi"
+        response = self.get_data(event)
+        self.assertTrue(response.status_code == 404)
+
+        event['radius'] = "2.34057198340981209834098103489398734576349714mi"
+        response = self.get_data(event)
+        self.assertTrue(response.status_code == 200)
+        self.assertEqual(json.loads(response.data.decode()),
+                         {'Music': 'a', 'Family': 'b', 'Workshop': 'c'})
+
+        event['radius'] = "0mi"
+        response = self.get_data(event)
+        self.assertTrue(response.status_code == 404)
+
+        event['radius'] = "00248271mi"
+        response = self.get_data(event)
+        self.assertTrue(response.status_code == 200)
+        self.assertEqual(json.loads(response.data.decode()),
+                         {'Music': 'a', 'Family': 'b', 'Workshop': 'c'})
+
+        event['radius'] = "0024.8271mi"
+        response = self.get_data(event)
+        self.assertEqual(json.loads(response.data.decode()),
+                         {'Music': 'a', 'Family': 'b', 'Workshop': 'c'})
+
+        event['radius'] = "8ne48*%@4mi"
+        response = self.get_data(event)
+        self.assertTrue(response.status_code == 404)
+    """
 
 if __name__ == "__main__":
     unittest.main()
