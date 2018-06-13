@@ -123,8 +123,9 @@ class TestCompoundSearch(unittest.TestCase):
         radius = query['query']['constant_score']['filter']['bool']['must'][0]['geo_distance']
         # test max cost
         max_cost['lte'] = 10000
-        radius['distance'] = "50mi"
+        radius['distance'] = "00235mi"
         results = db.search(query)
+        pprint(results)
         self.assertCountEqual(TestCompoundSearch.get_doc_list(results),
                          ['0', '1', '2', '3', '4'])
 
@@ -183,7 +184,6 @@ class TestCompoundSearch(unittest.TestCase):
 
         query_string['query'] = 'Food/Drinks + the color purple'
         results = db.search(query)
-        pprint(results)
         self.assertCountEqual(TestCompoundSearch.get_doc_list(results), ['2', '3', '4'])
 
 
