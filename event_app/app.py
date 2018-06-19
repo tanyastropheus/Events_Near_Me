@@ -11,17 +11,77 @@ from flask_cors import CORS
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-db = DB('event_test', 'event_info')
+db = DB("events_today", "info")
+#db.delete_index()
+db.create_index()
+#db = DB('test_fulltext_search', 'test_fulltextdoc')
+#db = DB('event_test', 'event_info')
+
+"""
+filename = '/tests/test_data.txt'
 #db = DB('test_compound_search', 'test_compound_doc')
+db.delete_index()
+
 
 # check ES is up and running
 res = requests.get('http://localhost:9200')
 print(res.status_code)
 
-# connect to ES server
-es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+def load_data_from_file(filename):
+    '''read data from test data file.
+
+    Returns:
+        List of event dicts.
+    '''
+    text = ""
+    with open(filename) as f:
+        for line in f:
+            li = line.strip()
+            if not li.startswith('#'):
+                text += line
+    events = json.loads(text, strict=False)
+    return events
 
 
+def store_docs(events):
+    '''store event data in elasticsearch.
+
+    Args:
+    events(list): a list of event data in dictionary form
+                  e.g. [event1, event2...] where each event is a dict
+
+    Note: document id starts with 0
+    '''
+    i = 0
+    while i < len(events):
+        event = "event" + str(i + 1)
+        db.store_doc(i, events[i][event])
+        i += 1
+
+def DBsetUP():
+    '''set up test database and load test data'''
+    db.create_index()
+
+    # save test data from file to the database
+    events = load_data_from_file(filename)
+    store_docs(events)
+
+    # allow time for Elasticsearch server to store all data
+    time.sleep(3)
+
+    # look up & save geolocation to db based on address
+    num_docs = db.get_num_docs()
+    for i in range(num_docs):
+        geo = db.addr_to_geo(i)
+        db.save_geo(i, geo)
+        i += 1
+
+    # allow time for Elasticsearch server to store all data
+    time.sleep(3)
+
+DBsetUP()
+
+"""
 @app.route('/index')
 def main():
     return render_template('index.html')
@@ -79,6 +139,7 @@ def event_search():
     }
 
     all_events_query = {
+        'from': 0, 'size': 10000,
         'query': {
             'constant_score': {
                 'filter': cost_geo_query
@@ -87,12 +148,15 @@ def event_search():
     }
 
     event_query = {
+        'from': 0, 'size': 10000,
         'query': {
             'bool': {
                 'must': {
                     'multi_match': {'query': "",
                                     'analyzer': 'english_synonym',
-                                    'fields': ['name', 'description', 'tags'],
+                                    'fields': ['name', 'tags'],
+                                    'type': 'best_fields',
+                                    'minimum_should_match': '85%',
                                     'fuzziness': 'AUTO'
                                 }
                 },
@@ -117,11 +181,15 @@ def event_search():
 
 
     try:
+        print("data sent to ES:")
+        pprint(body)
         data = db.search(body)
     except UnboundLocalError:
         print("exception")
         pass
 
+    print("data from endpoint:")
+    pprint(data)
     return json.dumps(data)
 
 @app.route('/api/all_events')
