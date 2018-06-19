@@ -2,6 +2,7 @@ import sys, unittest, time, json
 sys.path.append('..')
 from elasticsearch import Elasticsearch
 from event_app.db import DB
+from pprint import pprint
 
 db = DB('test_fulltext_search', 'test_fulltextdoc')
 filename = 'test_data/test_data.txt'
@@ -39,12 +40,12 @@ class TestFullTextSearch(unittest.TestCase):
         # allow time for Elasticsearch server to store all data
         time.sleep(3)
 
-
+    """
     @classmethod
     def tearDownClass(cls):
         '''delete test index'''
         db.delete_index()
-
+    """
     @staticmethod
     def get_doc_list(results):
         '''take search results and return a list of doc id's'''
@@ -207,9 +208,14 @@ class TestFullTextSearch(unittest.TestCase):
         the indexed docs
         '''
         # "us" => "US"; "SALSA" => "salsa"
-        self.query['query']['multi_match']['query'] = "dance SALSA with us"
+        self.query['query']['multi_match']['query'] = "Salsa Dance"
         results = db.search(self.query)
-        self.assertEqual(self.get_doc_list(results), ['2', '0', '1'])
+        self.assertCountEqual(self.get_doc_list(results), ['2', '1'])
+
+        self.query['query']['multi_match']['query'] = "sleeping beauty"
+        results = db.search(self.query)
+        pprint(results)
+        self.assertCountEqual(self.get_doc_list(results), ['4', '1'])
 
 
     def test_html_stripper(self):
