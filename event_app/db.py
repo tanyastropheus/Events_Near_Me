@@ -37,7 +37,7 @@ class DB():
                     "tokenizer":  "standard",
                     "char_filter": ['html_strip'], # strips '\n' in description field
                     "filter": [
-                        "synonym",
+#                        "synonym",
                         "asciifolding",  # for accents
                         "english_possessive_stemmer",
                         "lowercase",
@@ -175,6 +175,8 @@ class DB():
             body = single_query
         '''
         results = self.es.search(index=self.index, doc_type=self.doc_type, body=query)
+        print("from db query")
+        pprint(results)
         return results
 
 
