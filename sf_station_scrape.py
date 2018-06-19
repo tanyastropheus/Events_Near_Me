@@ -4,10 +4,13 @@
 import requests
 import re
 import sys
+from event_app.db import DB
 from bs4 import BeautifulSoup
 from elasticsearch import Elasticsearch
 from pprint import pprint  # REVISIT: for debugging purpose only.
 
+db = DB('events_today', 'info')
+"""
 index = 'events'
 doc_type = 'info'
 
@@ -86,8 +89,8 @@ def store_docs(index, doc_type, doc_id, data):
 
 # connect to ES server
 es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+"""
 doc_id = 0
-
 url = 'https://www.sfstation.com/{}'
 events_calendar = url.format('calendar/bay-area')
 page = requests.get(events_calendar)
@@ -104,10 +107,10 @@ delete_index(index)
 es.indices.delete(index='events')
 sys.exit()
 '''
-
+'''
 delete_index(index)
 create_index(index)
-
+'''
 while True:
     # grab all event names and links on the page
     event_names = [name.text for name in soup.find_all('a', class_='url summary')]
@@ -130,7 +133,7 @@ while True:
         if event_soup.find('dt', text=re.compile(r'When')):
             date = re.match('^[^(]+', event_soup.find('dd').get_text())
             event['date'] = date.group(0).strip()
-        if event_soup.select('.businessName'):
+        if event_soup.select_one('a.businessName'):
             venue = event_soup.select_one('a.businessName').text
             event['venue'] = venue
         if event_soup.find('span', class_='address'):
@@ -164,12 +167,21 @@ while True:
         pprint(event)
         events.append(event)
 
-        store_docs(index, doc_type, doc_id, event)
+        db.store_doc(doc_id, event)
+        geo = db.addr_to_geo(doc_id)
+        db.save_geo(doc_id, geo)
         doc_id += 1
 
+
+    print("list of pages:", soup.select('div#listingPagination > a'))
+    print("last one:", soup.select('div#listingPagination > a')[-1])
+#    print(soup.select('div#listingPagination > a')[-1].text == 'Next »')
     if soup.select('div#listingPagination > a')[-1].get_text() == 'Next »':
-        next_page = url + soup.select('div#listingPagination > a')[-1].get('href')
+        print("inside")
+        next_page = url.format(soup.select('div#listingPagination > a')[-1].get('href'))
+        print("next page url:", next_page)
         page = requests.get(next_page)
+        print("next page:", page)
         soup = BeautifulSoup(page.content, 'html.parser')
     else:
         break
