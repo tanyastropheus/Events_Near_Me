@@ -93,6 +93,7 @@ $(document).ready(function () {
   // updates query after user inputs search radius
   $('#radius').blur(function () {
     saveRadius();
+    console.log("data sent to server: ", event);
     if (searchCircle != 'undefined') {
       deleteRadiusCircle();
     }
