@@ -47,7 +47,7 @@ class DB():
                 }
             }
         }
-        }
+    }
 
     def __init__(self, index, doc_type):
         self.index = index
@@ -65,7 +65,18 @@ class DB():
                 "cost" : {"type" : "long"},
                 "date" : {"type" : "keyword"}, # REVISIT with date datatype
                 "link" : {"type" : "keyword"},
-                "name" : {"type" : "text", "analyzer": "english_synonym"},
+                "name" : {
+                    "type": "text",
+                    "fields": {
+                        "keyword_string": {
+                            "type": "text",
+                            "analyzer": "english_synonym"
+                        },
+                        "completion": {
+                            "type": "completion"
+                        }
+                    }
+                },
                 "tags" : {"type" : "text", "analyzer": "english_synonym"},
                 "time" : {"type" : "keyword"}, # REVISIT
                 "image_url": {"type": "keyword"},
@@ -179,6 +190,19 @@ class DB():
         pprint(results)
         return results
 
+    def auto_complete(self, user_input=""):
+        '''queries database in real time as user inputs data'''
+        auto_query = {
+            'suggest': {
+                'event-suggest': {
+                    "prefix": user_input,
+                    "completion": {
+                        "field": "name"
+                    }
+                }
+            }
+        }
+        results = self.es.search(index=self.index, doc_type=self.doc_type, body=query)
 
     def get_num_docs(self):
         '''return the number of docs saved in an index'''

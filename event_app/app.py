@@ -13,7 +13,6 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 db = DB("events_today", "info")
 #db.delete_index()
-db.create_index()
 #db = DB('test_fulltext_search', 'test_fulltextdoc')
 #db = DB('event_test', 'event_info')
 
@@ -85,6 +84,25 @@ DBsetUP()
 @app.route('/index')
 def main():
     return render_template('index.html')
+
+@app.route('/api/event_auto_complete', methods=['POST', 'GET'])
+def auto_complete():
+    '''queries database in real time as user inputs data'''
+    params = request.get_json()
+    user_input = params['keywords']
+
+    query = {
+        'suggest': {
+            'event-suggest': {
+                "prefix": user_input,
+                "completion": {
+                    "field": "name"
+                }
+            }
+        }
+    }
+    results = self.es.search(index=self.index, doc_type=self.doc_type, body=query)
+
 
 @app.route('/api/event_search', methods=['POST', 'GET'])
 def event_search():
