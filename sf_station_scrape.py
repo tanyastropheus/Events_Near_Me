@@ -9,10 +9,13 @@ from bs4 import BeautifulSoup
 from elasticsearch import Elasticsearch
 from pprint import pprint  # REVISIT: for debugging purpose only.
 
-db = DB('events_today', 'info')
+db = DB('events_auto', 'info')
+db.create_index()
+
 """
 index = 'events'
 doc_type = 'info'
+
 
 def create_index(index):
     '''create empty index with customized setting & mapping'''
@@ -117,8 +120,13 @@ while True:
     event_links = [link.get('href') for link in soup.find_all('a', class_='url summary')]
 
     for i in range(len(event_names)):
-        event = {}
+        event = {
+            "suggest": {
+                "input": []
+            }
+        }
         event['name'] = event_names[i]
+        event['suggest']['input'] = [event_names[i]]
         event['link'] = url.format(event_links[i])
 
         # following event link to get additional event info
