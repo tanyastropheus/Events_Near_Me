@@ -423,7 +423,7 @@ function autoComplete() {
 	  let suggestedEvents = []
 	  results = data.suggest.event_suggest[0].options
 	  for (const event of results) {
-	    suggestedEvents.push(event.text);
+	    suggestedEvents.push(event._source.name);
 	  }
 	  console.log(suggestedEvents);
 	  response(suggestedEvents);

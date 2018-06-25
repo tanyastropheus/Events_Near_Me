@@ -89,12 +89,13 @@ def auto_complete():
     print(user_input)
 
     query = {
-        '_source': 'suggest',
+#        '_source': 'suggest',
         'suggest': {
             'event_suggest': {
                 "prefix": user_input,
                 "completion": {
-                    "field": "name.completion",
+                    "size": 20,
+                    "field": "suggest.completion",
                     "fuzzy": {
                         "fuzziness": 1
                     }

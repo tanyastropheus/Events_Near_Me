@@ -68,12 +68,17 @@ class DB():
                             "type": "text",
                             "analyzer": "english_synonym"
                         },
-                        "completion": {
-                            "type": "completion"
-                        },
                         "exact_search" : {
                             "type": "keyword"
                         }
+                    }
+                },
+                "suggest": {
+                    "type": "text",
+                    "fields": {
+                        "completion": {
+                            "type": "completion"
+                            }
                     }
                 },
                 "tags" : {"type" : "text", "analyzer": "english_synonym"},

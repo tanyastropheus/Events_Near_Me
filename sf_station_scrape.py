@@ -26,16 +26,14 @@ while True:
 
     for i in range(len(event_names)):
         event = {
-            "suggest": {
-                "input": []
-            }
+            "suggest": []
         }
         event['name'] = event_names[i]
         event_words = event_names[i].split()
         for i in range(len(event_words)):
-            event['suggest']['input'].append(' '.join(event_words[i:]))
+            event['suggest'].append(' '.join(event_words[i:]))
 
-        print(event['suggest']['input'])
+        print(event['suggest'])
         event['link'] = url.format(event_links[i])
 
         # following event link to get additional event info
