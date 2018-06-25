@@ -95,9 +95,6 @@ def auto_complete():
                 "completion": {
                     "size": 20,
                     "field": "suggest.completion",
-                    "fuzzy": {
-                        "fuzziness": 1
-                    }
                 }
             }
         }
