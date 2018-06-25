@@ -12,9 +12,6 @@ app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 db = DB("events_today", "info")
-#db.delete_index()
-#db = DB('test_fulltext_search', 'test_fulltextdoc')
-#db = DB('event_test', 'event_info')
 
 """
 filename = '/tests/test_data.txt'
@@ -88,25 +85,52 @@ def main():
 @app.route('/api/event_auto_complete', methods=['POST', 'GET'])
 def auto_complete():
     '''queries database in real time as user inputs data'''
-    params = request.get_json()
-    user_input = params['keywords']
+    user_input = request.get_json()
+    print(user_input)
 
     query = {
+        '_source': 'suggest',
         'suggest': {
-            'event-suggest': {
+            'event_suggest': {
                 "prefix": user_input,
                 "completion": {
-                    "field": "name"
+                    "field": "name.completion",
+                    "fuzzy": {
+                        "fuzziness": 1
+                    }
                 }
             }
         }
     }
-    results = self.es.search(index=self.index, doc_type=self.doc_type, body=query)
+    print(query)
+    results = db.search(query)
+    return json.dumps(results)
+
+
+@app.route('/api/event_title', methods=['POST', 'GET'])
+def get_event():
+    '''return the event user selected from the autocomplete suggester'''
+    event_title = request.get_json()
+    print(event_title)
+
+    query = {
+        'query': {
+            'term': {
+                'name.exact_search': event_title
+            }
+        }
+    }
+    pprint(query)
+    result = db.search(query)
+    return json.dumps(result)
+
 
 
 @app.route('/api/event_search', methods=['POST', 'GET'])
 def event_search():
-    """return events searched by the user"""
+    """
+    Return events searched by the user through selected event tags and keywords
+    """
     params = request.get_json()
 
     if params is None:

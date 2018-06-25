@@ -26,6 +26,33 @@ $(document).ready(function () {
     $('.dropdown_tags').hide();
   });
 
+  // dropdown menu hidden when user types in keywords
+  $('#tags').keyup(function () {
+    $('.dropdown_tags').hide();
+    event['keywords'] = $('form #tags').val();
+    autoComplete();
+  });
+
+  $('#tags').autocomplete({
+    select: function( event, ui) {
+      console.log("event title: ", ui.item.value)
+      $.ajax({
+	type: 'POST',
+	url: '/api/event_title',
+	contentType: 'application/json',
+	data: JSON.stringify(ui.item.value),
+	dataType: 'json',
+	success: function(data) {
+	  event = data.hits.hits
+	  console.log("auto", event)
+	  deleteMarkers();  // remove existing markers
+	  addMarkers(event);  // populate page with new event markers
+	}
+      });
+    }
+  });
+
+
   /* Event Keywords Input:
      1. Accept either user keywords or checked event tags.
      2. User keywords may be added at the end of event tags selection, in which
@@ -43,6 +70,7 @@ $(document).ready(function () {
     }
   });
 
+/*
   // updates query after user clicks outside form area
   $('#tags').blur(function () {
     // if text input exists, clear all checked event tags
@@ -50,7 +78,7 @@ $(document).ready(function () {
       saveKeywords();
     }
   });
-
+*/
 
   // updates query as user makes event tag selection by clicking on <li>
   $('.dropdown_tags li').click(function () {
@@ -379,6 +407,32 @@ function saveKeywords() {
 //    console.log("tags: ", event['tags']);
   }
 }
+
+// query DB as the user types (autocomplete)
+function autoComplete() {
+  $('#tags').autocomplete({
+    source: function(request, response) {
+      console.log(request.term)
+      $.ajax({
+	type: 'POST',
+	url: '/api/event_auto_complete',
+	contentType: 'application/json',
+	data: JSON.stringify(request.term),
+	dataType: 'json',
+	success: function(data) {
+	  let suggestedEvents = []
+	  results = data.suggest.event_suggest[0].options
+	  for (const event of results) {
+	    suggestedEvents.push(event.text);
+	  }
+	  console.log(suggestedEvents);
+	  response(suggestedEvents);
+	}
+      });
+    }
+  });
+}
+
 
 // send event object to the backend & query corresponding events
 function getEvents() {

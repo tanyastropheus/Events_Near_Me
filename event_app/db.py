@@ -1,8 +1,4 @@
 #!/usr/bin/python3
-'''
-index = 'events'
-doc_type = 'info'
-'''
 
 import requests, urllib
 from elasticsearch import Elasticsearch
@@ -68,12 +64,15 @@ class DB():
                 "name" : {
                     "type": "text",
                     "fields": {
-                        "keyword_string": {
+                        "keyword_search": {
                             "type": "text",
                             "analyzer": "english_synonym"
                         },
                         "completion": {
                             "type": "completion"
+                        },
+                        "exact_search" : {
+                            "type": "keyword"
                         }
                     }
                 },
@@ -91,37 +90,6 @@ class DB():
         }
         self.es.indices.create(index=self.index, body=setting)
 
-    """
-    def view_tokens(events, field, proc_type, proc_name):
-        '''
-        Print a list of tokens based on the analyzer/tokenizer chosen.
-
-        Args:
-            events (list of dicts): events
-            field (str): field of the event to be tokenized
-            proc_type (str): "analyzer" or "tokenizer"
-            proc_name (str): name of the proc_type
-        '''
-
-        body = {
-            proc_type: proc_name,
-            "text": ""
-        }
-
-        print('{}: {}'.format(proc_type, proc_name))
-        for i in range(len(events)):
-            text = events[i]['event' + str(i + 1)][field]
-            body['text'] = text
-            print(text)
-            results = es.indices.analyze(index=index, body=body)
-            print("tokens: ")
-
-            tokens = []
-            for j in range(len(results['tokens'])):
-                tokens.append(results['tokens'][j]['token'])
-
-            pprint(tokens)
-    """
     def get_tokens(self, anal_type, anal_name, text, index=None):
         ''''
         Return a list of tokens based on the standard tokenizer.
@@ -152,39 +120,7 @@ class DB():
         self.es.index(index=self.index, doc_type=self.doc_type, id=doc_id, body=data)
 
     def search(self, query):
-        '''search index for docs that match query string'''
-        # will pass the query to the function instead of setting inside the function
-        '''
-        multi_query = {
-            'query': {
-                'multi_match': {
-                    'query': q_string,
-                    'type': 'best_fields',
-                    'analyzer': 'english_synonym',
-                    'fields': ['name', 'description', 'tags'],
-                    'fuzziness': 'AUTO'
-                }
-            }
-        }
-
-        single_query = {
-            'query': {
-                'match': {
-                    'description': {
-                        'query': q_string,
-                        'analyzer': 'english_synonym'
-                    }
-                }
-            }
-        }
-
-        print("query:", q_string)
-
-        if q_multi == True:
-            body = multi_query
-        else:
-            body = single_query
-        '''
+        '''search index with the given query for matching docs'''
         results = self.es.search(index=self.index, doc_type=self.doc_type, body=query)
         print("from db query")
         pprint(results)
