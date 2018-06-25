@@ -89,7 +89,6 @@ def auto_complete():
     print(user_input)
 
     query = {
-#        '_source': 'suggest',
         'suggest': {
             'event_suggest': {
                 "prefix": user_input,
