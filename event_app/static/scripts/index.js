@@ -33,6 +33,7 @@ $(document).ready(function () {
     autoComplete();
   });
 
+  // Display the event user selects from the event suggestion menu on the map
   $('#tags').autocomplete({
     select: function( event, ui) {
       console.log("event title: ", ui.item.value)
@@ -48,6 +49,25 @@ $(document).ready(function () {
 	  deleteMarkers();  // remove existing markers
 	  addMarkers(event);  // populate page with new event markers
 	}
+      });
+    }
+  });
+
+
+  // Bold the search term from the list of event suggestions
+  let termTemplate = "<span class='ui-autocomplete-term'>%s</span>";
+  $('#tags').autocomplete({
+    open: function( event, ui) {
+      let eventSuggest = $(this).data('ui-autocomplete');
+      console.log("event suggest:", eventSuggest)
+      let styledTerm = termTemplate.replace('%s', eventSuggest.term);
+
+      eventSuggest.menu.element.find('li').each(function() {
+	let event_name = $(this);
+	let searchTerm = eventSuggest.term.split(' ').join('|');
+	console.log("searchTerm:", searchTerm);
+	event_name.html(event_name.text().replace(new RegExp("(" + searchTerm + ")", "gi"),
+						  "<span style='font-weight:bold;color:Blue;'>$1</span>"));
       });
     }
   });
