@@ -28,6 +28,8 @@ while True:
             "suggest": []
         }
         event['name'] = event_names[i]
+
+        # indexing event name for the elasticsearch completion suggester
         event_words = event_names[i].split()
         for i in range(len(event_words)):
             event['suggest'].append(' '.join(event_words[i:]))
