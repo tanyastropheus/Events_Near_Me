@@ -435,7 +435,7 @@ function autoComplete() {
       console.log(request.term)
       $.ajax({
 	type: 'POST',
-	url: '/api/event_auto_complete',
+	url: '/api/event_suggestions',
 	contentType: 'application/json',
 	data: JSON.stringify(request.term),
 	dataType: 'json',
