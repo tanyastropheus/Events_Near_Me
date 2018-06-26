@@ -7,7 +7,7 @@ from pprint import pprint  # REVISIT: for debugging purpose only.
 class DB():
     '''DB class that handles setup and other db-related operations'''
     # customize analyzer for english stemming and possessives
-    english_synonym = {
+    event_english = {
         "analysis": {
             "filter": {
                 "english_stop": {
@@ -24,7 +24,7 @@ class DB():
                 }
             },
             "analyzer": {
-                "english_synonym": {
+                "event_english": {
                     "tokenizer":  "standard",
                     "char_filter": ['html_strip'], # strip '\n' in description
                     "filter": [
@@ -60,7 +60,7 @@ class DB():
                     "fields": {
                         "keyword_search": {
                             "type": "text",
-                            "analyzer": "english_synonym"
+                            "analyzer": "event_english"
                         },
                         "exact_search" : {
                             "type": "keyword"
@@ -75,16 +75,16 @@ class DB():
                             }
                     }
                 },
-                "tags" : {"type" : "text", "analyzer": "english_synonym"},
+                "tags" : {"type" : "text", "analyzer": "event_english"},
                 "time" : {"type" : "keyword"}, # REVISIT
                 "image_url": {"type": "keyword"},
-                "description": {"type" : "text", "analyzer": "english_synonym"},
+                "description": {"type" : "text", "analyzer": "event_english"},
                 "venue": {"type": "keyword"}
             }
         }
 
         setting = {
-            "settings": self.english_synonym,
+            "settings": self.event_english,
             "mappings": {self.doc_type: mapping}
         }
 
@@ -124,8 +124,8 @@ class DB():
 
     def search(self, query):
         '''search index with the given query for matching docs'''
-        results = self.es.search(index=self.index,
-                                 doc_type=self.doc_type, body=query)
+        results = self.es.search(index=self.index, doc_type=self.doc_type,
+                                 body=query)
         print("from db query")
         pprint(results)
         return results
@@ -165,5 +165,4 @@ class DB():
 
     def save_geo(self, doc_id, geo_location):
         '''save the geo-coordinates to ES for the doc id specified'''
-        self.es.update(index=self.index, doc_type=self.doc_type,
-                       id=doc_id, body=geo_location)
+        self.es.update(index=self.index, doc_type=self.doc_type, id=doc_id, body=geo_location)
