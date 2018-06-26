@@ -10,7 +10,6 @@ from elasticsearch import Elasticsearch
 from pprint import pprint  # REVISIT: for debugging purpose only.
 
 db = DB('events_today', 'info')
-db.delete_index()
 db.create_index()
 doc_id = 0
 url = 'https://www.sfstation.com/{}'
