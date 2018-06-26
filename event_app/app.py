@@ -2,7 +2,7 @@
 
 import requests, json, copy, sys
 print(sys.path)
-from event_app.db import DB
+from event_app import db
 from pprint import pprint
 from elasticsearch import Elasticsearch
 from flask import abort, Flask, render_template, jsonify, request
@@ -11,83 +11,15 @@ from flask_cors import CORS
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-db = DB("events_today", "info")
-
-"""
-filename = '/tests/test_data.txt'
-#db = DB('test_compound_search', 'test_compound_doc')
-db.delete_index()
-
-
-# check ES is up and running
-res = requests.get('http://localhost:9200')
-print(res.status_code)
-
-def load_data_from_file(filename):
-    '''read data from test data file.
-
-    Returns:
-        List of event dicts.
-    '''
-    text = ""
-    with open(filename) as f:
-        for line in f:
-            li = line.strip()
-            if not li.startswith('#'):
-                text += line
-    events = json.loads(text, strict=False)
-    return events
-
-
-def store_docs(events):
-    '''store event data in elasticsearch.
-
-    Args:
-    events(list): a list of event data in dictionary form
-                  e.g. [event1, event2...] where each event is a dict
-
-    Note: document id starts with 0
-    '''
-    i = 0
-    while i < len(events):
-        event = "event" + str(i + 1)
-        db.store_doc(i, events[i][event])
-        i += 1
-
-def DBsetUP():
-    '''set up test database and load test data'''
-    db.create_index()
-
-    # save test data from file to the database
-    events = load_data_from_file(filename)
-    store_docs(events)
-
-    # allow time for Elasticsearch server to store all data
-    time.sleep(3)
-
-    # look up & save geolocation to db based on address
-    num_docs = db.get_num_docs()
-    for i in range(num_docs):
-        geo = db.addr_to_geo(i)
-        db.save_geo(i, geo)
-        i += 1
-
-    # allow time for Elasticsearch server to store all data
-    time.sleep(3)
-
-DBsetUP()
-
-"""
 @app.route('/index')
 def main():
     return render_template('index.html')
 
-@app.route('/api/event_auto_complete', methods=['POST', 'GET'])
-def auto_complete():
-    '''queries database in real time as user inputs data'''
+@app.route('/api/event_suggestions', methods=['POST', 'GET'])
+def get_event_suggestions():
+    '''queries database in real time to return a list of suggested events
+    as user inputs data'''
     user_input = request.get_json()
-    print(user_input)
-
     query = {
         'suggest': {
             'event_suggest': {
@@ -99,7 +31,6 @@ def auto_complete():
             }
         }
     }
-    print(query)
     results = db.search(query)
     return json.dumps(results)
 
@@ -108,8 +39,6 @@ def auto_complete():
 def get_event():
     '''return the event user selected from the autocomplete suggester'''
     event_title = request.get_json()
-    print(event_title)
-
     query = {
         'query': {
             'term': {
@@ -117,10 +46,8 @@ def get_event():
             }
         }
     }
-    pprint(query)
     result = db.search(query)
     return json.dumps(result)
-
 
 
 @app.route('/api/event_search', methods=['POST', 'GET'])
@@ -138,23 +65,19 @@ def event_search():
     try:
         float(params['cost'])
         if float(params['cost']) < 0:
-            print("cost < 0")
             abort(404)
     except ValueError:
         if params['cost'] == "100+":
             params['cost'] = 10000
         else:
-            print("cost abort")
             abort(404)
 
     # check radius input
     try:
         float(params['radius'][:-2])
         if float(params['radius'][:-2]) <= 0:
-            print("radius negative")
             abort(404)
     except ValueError:
-        print("radius not a number")
         abort(404)
 
     cost_geo_query = {
@@ -231,6 +154,7 @@ def event_search():
     pprint(data)
     return json.dumps(data)
 
+
 @app.route('/api/all_events')
 def all_events():
     '''return all event data from DB'''
@@ -249,64 +173,6 @@ def all_events():
     print("num_events: ", num_events)
     return json.dumps(events)
 
-
-@app.route('/map/all')
-def all_events_map():
-    '''drop pins based on lat&lon from ES using test'''
-    '''(index = event_test, doctype = practice)'''
-    return render_template('test_all_from_DB.html')
-
-@app.route('/')
-def show_all():
-    '''displays event data stored in ES'''
-    search_all = requests.get('http://localhost:9200/events/_search?pretty')
-    return search_all.content
-
-@app.route('/test')
-def test():
-    '''check that flask is up and serving the right webpages'''
-    return render_template('test.html')
-
-@app.route('/map')
-def display_map():
-    '''displays Google Map with Holberton school as the center view.  No pin'''
-    return render_template('test_add_map.html')
-
-@app.route('/map/geocoding')
-def geocoding():
-    '''test drop one pin based on hard-coded address'''
-    '''using geocode to convert address to long & lat'''
-    return render_template('test_geocoding.html')
-
-# this is extra
-@app.route('/map/geo_detect')
-def geo_detect():
-    '''detects user location based on user device'''
-    return render_template('test_geo_detect.html')
-
-
-"""no longer needed since geolocation is saved in ES
-@app.route('/map/all')
-def all_events():
-    '''drop pins based on address from test data (index = event_test)'''
-    # index name to be queried
-    idx_name = 'event_test'
-    doc = 'practice'
-
-    # get total number of events
-    num_events = es.count(index=idx_name, doc_type=doc)['count']
-
-    events = {}  # a dict of event dicts
-    i = 0
-    while i < num_events:
-        event = {}  # {id: {'name': 'e_name', 'address': 'e_addr',...}}
-        event[i] = es.get(index=idx_name, doc_type=doc, id=str(i))['_source']
-        events.update(event)
-        i += 1
-
-    # return json.dumps(events)
-    return render_template('test_all.html')
-"""
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
