@@ -115,7 +115,7 @@ def event_search():
             'bool': {
                 'must': {
                     'multi_match': {'query': "",
-                                    'analyzer': 'english_synonym',
+                                    'analyzer': 'event_english',
                                     'fields': ['name', 'tags'],
                                     'type': 'best_fields',
                                     'minimum_should_match': '85%',
