@@ -6,8 +6,8 @@ from pprint import pprint  # REVISIT: for debugging purpose only.
 
 class DB():
     '''DB class that handles setup and other db-related operations'''
-    # customize analyzer for english stemming, possessives, and synonyms
-    english_synonym = {
+    # customize analyzer for english stemming and possessives
+    event_english = {
         "analysis": {
             "filter": {
                 "english_stop": {
@@ -21,19 +21,13 @@ class DB():
                 "english_possessive_stemmer": {
                     "type": "stemmer",
                     "language": "possessive_english"
-                },
-                "synonym": {  # set synonym filter with synonyms from WordNet
-                    "type": "synonym",
-                    "format": "wordnet",
-                    "synonyms_path": "analysis/wn_s.pl"
                 }
             },
             "analyzer": {
-                "english_synonym": {
+                "event_english": {
                     "tokenizer":  "standard",
-                    "char_filter": ['html_strip'], # strips '\n' in description field
+                    "char_filter": ['html_strip'], # strip '\n' in description
                     "filter": [
-#                        "synonym",
                         "asciifolding",  # for accents
                         "english_possessive_stemmer",
                         "lowercase",
@@ -66,7 +60,7 @@ class DB():
                     "fields": {
                         "keyword_search": {
                             "type": "text",
-                            "analyzer": "english_synonym"
+                            "analyzer": "event_english"
                         },
                         "exact_search" : {
                             "type": "keyword"
@@ -81,21 +75,21 @@ class DB():
                             }
                     }
                 },
-                "tags" : {"type" : "text", "analyzer": "english_synonym"},
+                "tags" : {"type" : "text", "analyzer": "event_english"},
                 "time" : {"type" : "keyword"}, # REVISIT
                 "image_url": {"type": "keyword"},
-                "description": {"type" : "text", "analyzer": "english_synonym"},
+                "description": {"type" : "text", "analyzer": "event_english"},
                 "venue": {"type": "keyword"}
             }
         }
 
         setting = {
-            "settings": self.english_synonym,
+            "settings": self.event_english,
             "mappings": {self.doc_type: mapping}
         }
         self.es.indices.create(index=self.index, body=setting)
 
-    def get_tokens(self, anal_type, anal_name, text, index=None):
+    def get_tokens(self, analyzer_type, analyzer_name, text, index=None):
         ''''
         Return a list of tokens based on the standard tokenizer.
 
@@ -104,7 +98,7 @@ class DB():
         '''
 
         body = {
-            anal_type: anal_name,
+            analyzer_type: analyzer_name,
             "text": ""
         }
 
@@ -122,17 +116,18 @@ class DB():
 
     def store_doc(self, doc_id, data):
         '''store event data in designated index and doc_type'''
-        self.es.index(index=self.index, doc_type=self.doc_type, id=doc_id, body=data)
+        self.es.index(index=self.index, doc_type=self.doc_type,
+                      id=doc_id, body=data)
 
     def search(self, query):
         '''search index with the given query for matching docs'''
-        results = self.es.search(index=self.index, doc_type=self.doc_type, body=query)
-        print("from db query")
-        pprint(results)
+        results = self.es.search(index=self.index,
+                                 doc_type=self.doc_type, body=query)
         return results
 
-    def auto_complete(self, user_input=""):
-        '''queries database in real time as user inputs data'''
+    def get_event_suggestions(self, user_input=""):
+        '''queries database in real time to return a list of suggested events
+        as user inputs data'''
         auto_query = {
             'suggest': {
                 'event-suggest': {
@@ -146,10 +141,9 @@ class DB():
         results = self.es.search(index=self.index, doc_type=self.doc_type, body=query)
 
     def get_num_docs(self):
-        '''return the number of docs saved in an index'''
+        '''return the number of docs in an index'''
         if self.es.indices.exists(index=self.index):
             num_docs = self.es.count(index=self.index, doc_type=self.doc_type)['count']
-            print("number of documents: ", num_docs)
 
         return num_docs
 
@@ -165,16 +159,15 @@ class DB():
         api_key = 'AIzaSyDMZ83GsgwA4MGa52utHcrdwufwdE6aCDc'
 
         addr = self.es.get(index=self.index, doc_type=self.doc_type, id=doc_id)['_source']['address']
-#        print(addr)
         addr_lookup = {'address': addr, 'key': api_key}
         addr_url = urllib.parse.urlencode(addr_lookup)
         geo = requests.get('https://maps.googleapis.com/maps/api/geocode/json?{}'.format(addr_url))
         geo.connection.close()
+
         if geo.status_code == 200:
             lat = geo.json()['results'][0]['geometry']['location']['lat']
             lng = geo.json()['results'][0]['geometry']['location']['lng']
             geo_location = {'doc': {'location': {'lat': lat, 'lon': lng}}}
-#            print(geo_location)
             return geo_location
         else:
             print("geo request failed")
@@ -182,4 +175,5 @@ class DB():
 
     def save_geo(self, doc_id, geo_location):
         '''save the geo-coordinates to ES for the doc id specified'''
-        self.es.update(index=self.index, doc_type=self.doc_type, id=doc_id, body=geo_location)
+        self.es.update(index=self.index, doc_type=self.doc_type,
+                       id=doc_id, body=geo_location)
