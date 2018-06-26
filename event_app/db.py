@@ -7,7 +7,7 @@ from pprint import pprint  # REVISIT: for debugging purpose only.
 class DB():
     '''DB class that handles setup and other db-related operations'''
     # customize analyzer for english stemming and possessives
-    event_english = {
+    english_synonym = {
         "analysis": {
             "filter": {
                 "english_stop": {
@@ -24,7 +24,7 @@ class DB():
                 }
             },
             "analyzer": {
-                "event_english": {
+                "english_synonym": {
                     "tokenizer":  "standard",
                     "char_filter": ['html_strip'], # strip '\n' in description
                     "filter": [
@@ -60,7 +60,7 @@ class DB():
                     "fields": {
                         "keyword_search": {
                             "type": "text",
-                            "analyzer": "event_english"
+                            "analyzer": "english_synonym"
                         },
                         "exact_search" : {
                             "type": "keyword"
@@ -75,19 +75,22 @@ class DB():
                             }
                     }
                 },
-                "tags" : {"type" : "text", "analyzer": "event_english"},
+                "tags" : {"type" : "text", "analyzer": "english_synonym"},
                 "time" : {"type" : "keyword"}, # REVISIT
                 "image_url": {"type": "keyword"},
-                "description": {"type" : "text", "analyzer": "event_english"},
+                "description": {"type" : "text", "analyzer": "english_synonym"},
                 "venue": {"type": "keyword"}
             }
         }
 
         setting = {
-            "settings": self.event_english,
+            "settings": self.english_synonym,
             "mappings": {self.doc_type: mapping}
         }
-        self.es.indices.create(index=self.index, body=setting)
+
+        # create an index if not already exists
+        if not self.es.indices.exists(index=self.index):
+            self.es.indices.create(index=self.index, body=setting)
 
     def get_tokens(self, analyzer_type, analyzer_name, text, index=None):
         ''''
@@ -123,13 +126,15 @@ class DB():
         '''search index with the given query for matching docs'''
         results = self.es.search(index=self.index,
                                  doc_type=self.doc_type, body=query)
+        print("from db query")
+        pprint(results)
         return results
 
     def get_num_docs(self):
         '''return the number of docs in an index'''
         if self.es.indices.exists(index=self.index):
             num_docs = self.es.count(index=self.index, doc_type=self.doc_type)['count']
-
+        print("number of documents:", num_docs)
         return num_docs
 
 
