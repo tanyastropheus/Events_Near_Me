@@ -125,21 +125,6 @@ class DB():
                                  doc_type=self.doc_type, body=query)
         return results
 
-    def get_event_suggestions(self, user_input=""):
-        '''queries database in real time to return a list of suggested events
-        as user inputs data'''
-        auto_query = {
-            'suggest': {
-                'event-suggest': {
-                    "prefix": user_input,
-                    "completion": {
-                        "field": "name"
-                    }
-                }
-            }
-        }
-        results = self.es.search(index=self.index, doc_type=self.doc_type, body=query)
-
     def get_num_docs(self):
         '''return the number of docs in an index'''
         if self.es.indices.exists(index=self.index):
