@@ -1,19 +1,18 @@
-let event = {
-  keywords: "",
-  tags: [],
-  radius: "2mi",
-  user_location: {
-    lat: 37.7749300,  // default: San Francisco
-    lng:  -122.4194200
-  },
-  cost: 20,  //upper bound of cost
-  time: [],
-  date: ""
-};
+  let event = {
+    keywords: "",
+    tags: [],
+    radius: "2mi",
+    user_location: {
+      lat: 37.7749300,  // default: San Francisco
+      lng:  -122.4194200
+    },
+    cost: 20,  //upper bound of cost
+    time: [],
+    date: ""
+  };
 
-let markers = [];
-let map;
-
+  let markers = [];
+  let map;
 
 $(document).ready(function () {
   // dropdown menu display upon clicking on Event Keywords form area
@@ -26,15 +25,16 @@ $(document).ready(function () {
     $('.dropdown_tags').hide();
   });
 
-  // dropdown menu hidden when user types in keywords
-  $('#tags').keyup(function () {
+  // dropdown menu hidden & display event suggestions as user types search words
+  const tags = $('#search')
+  $('#search').keyup(function () {
     $('.dropdown_tags').hide();
-    event['keywords'] = $('form #tags').val();
+    event['keywords'] = $('#search').val();
     autoComplete();
   });
 
   // Display the event user selects from the event suggestion menu on the map
-  $('#tags').autocomplete({
+  $('#search').autocomplete({
     select: function( event, ui) {
       console.log("event title: ", ui.item.value)
       $.ajax({
@@ -56,7 +56,7 @@ $(document).ready(function () {
 
   // Bold the search term from the list of event suggestions
   let termTemplate = "<span class='ui-autocomplete-term'>%s</span>";
-  $('#tags').autocomplete({
+  $('#search').autocomplete({
     open: function( event, ui) {
       let eventSuggest = $(this).data('ui-autocomplete');
       console.log("event suggest:", eventSuggest)
@@ -65,9 +65,10 @@ $(document).ready(function () {
       eventSuggest.menu.element.find('li').each(function() {
 	let event_name = $(this);
 	let searchTerm = eventSuggest.term.split(' ').join('|');
+	let boldSearch = "<span style='font-weight:bold;color:Blue;'>$1</span>"
 	console.log("searchTerm:", searchTerm);
 	event_name.html(event_name.text().replace(new RegExp("(" + searchTerm + ")", "gi"),
-						  "<span style='font-weight:bold;color:Blue;'>$1</span>"));
+						  boldSearch));
       });
     }
   });
@@ -83,22 +84,23 @@ $(document).ready(function () {
   */
 
   // updates query after user presses enter on tag form input
-  $('#tags').keypress(function (event) {
+  $('#search').keypress(function (event) {
     if (event.which == 13) {
       saveKeywords();
       $('.dropdown_tags').hide();
     }
   });
 
-/*
+/* REVISIT
   // updates query after user clicks outside form area
-  $('#tags').blur(function () {
+  $('#search').blur(function () {
     // if text input exists, clear all checked event tags
-    if (typeof $('#tags').val() != 'undefined') {
+    if (typeof $('#search').val() != 'undefined') {
       saveKeywords();
     }
   });
 */
+
 
   // updates query as user makes event tag selection by clicking on <li>
   $('.dropdown_tags li').click(function () {
@@ -132,9 +134,9 @@ $(document).ready(function () {
 
     // display the checked tags in the Keyword search area
     if (event['tags'].length > 0) {
-      $('#tags').val(event['tags'].join(', '));
+      $('#search').val(event['tags'].join(', '));
     } else {
-      $('#tags').val("");
+      $('#search').val("");
     }
   });
 
@@ -296,31 +298,25 @@ function hideCost() {
   getEvents();
 }
 
-
-function getRadius() {
-  if (typeof $('#radius').val() != 'undefined') {   // if text input exists
-    radius = $('#radius').val();
+function getData(dataDOM) {
+  if (typeof dataDOM.val() != 'undefined') {   // if text input exists
+    dataVal = dataDOM.val();
+    return dataVal;
   }
-  return radius;
 }
 
 function saveRadius() {
-  radius = getRadius();
+  const radiusLen = $('#radius');
+  radius = getData(radiusLen)
   event['radius'] = radius + "mi";
 //    console.log(event['radius']);
 //    console.log(event);
     getEvents();
 }
 
-function getLocationAddr() {
-  if (typeof $('#user_location').val() != 'undefined') {   // if text input exists
-    userAddr = $('#user_location').val();
-    return userAddr;
-  }
-}
-
 function saveLocationGeo() {
-  userAddr = getLocationAddr();
+  const user_location = $('#user_location');
+  userAddr = getData(user_location);
   geocodeAddress(userAddr, function (geoAddr) {
     event['user_location'].lat = geoAddr.lat;
     event['user_location'].lng = geoAddr.lng;
@@ -330,7 +326,8 @@ function saveLocationGeo() {
 
 let userMarker;
 function setUserMarker() {
-  userAddr = getLocationAddr();
+  const user_location = $('#user_location');
+  userAddr = getData(user_location);
   geocodeAddress(userAddr, function(geoAddr) {
     // if userMarker already exists, delete it
     // then create a new marker for the updated location
@@ -362,6 +359,7 @@ function mileToMeters(mileDistance) {
 
 let searchCircle;
 function radiusCircle(geoAddr) {
+  const radiusLen = $('#radius');
   searchCircle = new google.maps.Circle({
     strokeColor: '#cc5728',
     strokeOpacity: 0.8,
@@ -370,7 +368,7 @@ function radiusCircle(geoAddr) {
     fillOpacity: 0.35,
     map: map,
     center: geoAddr,
-    radius: mileToMeters(getRadius())
+    radius: mileToMeters(getData(radiusLen))
   });
 }
 
@@ -415,8 +413,8 @@ function uncheckAllTags() {
 }
 
 function saveKeywords() {
-  if (typeof $('#tags').val() != 'undefined') {
-    event['keywords'] = $('form #tags').val();
+  if (typeof $('#search').val() != 'undefined') {
+    event['keywords'] = $('form #search').val();
     event['tags'] = [];
 
     uncheckAllTags();
@@ -430,7 +428,7 @@ function saveKeywords() {
 
 // query DB as the user types (autocomplete)
 function autoComplete() {
-  $('#tags').autocomplete({
+  $('#search').autocomplete({
     source: function(request, response) {
       console.log(request.term)
       $.ajax({

@@ -24,7 +24,7 @@ input::placeholder {
     font-style: italic;
 }
 
-input#tags {
+input#search {
     width: 610px;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -33,6 +33,13 @@ input#tags {
 
 input#radius {
     width: 40px;
+}
+
+.ui-menu .ui-menu-item {
+    background:red;
+    height:10px;
+    padding: 80px;
+    font-size:80px;
 }
 
 .dropdown_tags {
