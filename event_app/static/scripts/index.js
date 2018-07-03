@@ -1,18 +1,18 @@
-  let event = {
-    keywords: "",
-    tags: [],
-    radius: "2mi",
-    user_location: {
-      lat: 37.7749300,  // default: San Francisco
-      lng:  -122.4194200
-    },
-    cost: 20,  //upper bound of cost
-    time: [],
-    date: ""
-  };
+let event = {
+  keywords: "",
+  tags: [],
+  radius: "2mi",
+  user_location: {
+    lat: 37.7749300,  // default: San Francisco
+    lng:  -122.4194200
+  },
+  cost: 20,  //upper bound of cost
+  time: [],
+  date: ""
+};
 
-  let markers = [];
-  let map;
+let markers = [];
+let map;
 
 $(document).ready(function () {
   // dropdown menu display upon clicking on Event Keywords form area
@@ -26,7 +26,6 @@ $(document).ready(function () {
   });
 
   // dropdown menu hidden & display event suggestions as user types search words
-  const tags = $('#search')
   $('#search').keyup(function () {
     $('.dropdown_tags').hide();
     event['keywords'] = $('#search').val();
@@ -133,10 +132,11 @@ $(document).ready(function () {
 //    console.log("keywords: ", event['keywords']);
 
     // display the checked tags in the Keyword search area
+    const eventSearch = $('#search')
     if (event['tags'].length > 0) {
-      $('#search').val(event['tags'].join(', '));
+      eventSearch.val(event['tags'].join(', '));
     } else {
-      $('#search').val("");
+      eventSearch.val("");
     }
   });
 
@@ -153,7 +153,6 @@ $(document).ready(function () {
   // updates query after user presses enter on radius
   $('#radius').keypress(function (event) {
     if (event.which == 13) {
-//      console.log("radius submission!");
       saveRadius();
       if (searchCircle != 'undefined') {
 	deleteRadiusCircle();
@@ -195,10 +194,11 @@ $(document).ready(function () {
     min: 0,
     max: 100,
     slide: function( event, ui ) {
+      const price = $("#price")
       if (ui.value === 100) {
-	$( "#price" ).text( "$" + ui.value + "+");
+	price.text( "$" + ui.value + "+");
 	} else {
-	  $( "#price" ).text( "$" + ui.value );
+	  price.text( "$" + ui.value );
 	}
     }
   });
@@ -269,13 +269,13 @@ function hideTime() {
   if (event['time'].length === 0) {
     event['time'].push("Morning", "Afternoon", "Evening");
   }
-
+  const time = $('#time')
   if (event['time'].length === 3) {
-    $('#time').text("All Day");
+    time.text("All Day");
   } else {
-    $('#time').text(event['time'].join(', '));
+    time.text(event['time'].join(', '));
   }
-  $('#time').css({"background-color": "#f44271", "color": "white"});
+  time.css({"background-color": "#f44271", "color": "white"});
 
   console.log(event);
   getEvents();
@@ -286,13 +286,15 @@ function hideTime() {
 function hideCost() {
   $('.cost-slider').hide();
   // set ultra-high cost max if user selects '100+'
-  if ($('#price').text().slice(1) === '100+') {
+  const price = $('#price')
+  const cost = $('#cost')
+  if (price.text().slice(1) === '100+') {
     event['cost'] = 10000;
   } else {
-    event['cost'] = $('#price').text().slice(1);
+    event['cost'] = price.text().slice(1);
   }
-  $('#cost').text($('#price').text());
-  $('#cost').css({"background-color": "#f44271", "color": "white"});
+  cost.text(price.text());
+  cost.css({"background-color": "#f44271", "color": "white"});
 
   console.log(event);
   getEvents();
