@@ -36,10 +36,13 @@ input#radius {
 }
 
 .ui-menu .ui-menu-item {
-    background:red;
-    height:10px;
-    padding: 80px;
-    font-size:80px;
+    padding: 10px 10px;
+    margin: 10px 20px;
+    font-size:16px;
+}
+
+.ui-menu li:hover {
+    background: #c7eddf;
 }
 
 .dropdown_tags {
