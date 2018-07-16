@@ -3,10 +3,12 @@
 import requests, json, copy, sys
 print(sys.path)
 from event_app import db
+from event_app.local_setting import debug
 from pprint import pprint
 from elasticsearch import Elasticsearch
 from flask import abort, Flask, render_template, jsonify, request
 from flask_cors import CORS
+
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -175,4 +177,4 @@ def all_events():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=debug)
