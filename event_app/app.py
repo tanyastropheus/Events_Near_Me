@@ -82,7 +82,12 @@ def event_search():
     except ValueError:
         abort(404)
 
-    cost_geo_query = {
+
+    # time = [] is equivalent to  time = ["Morning", "Afternoon", "Evening"]
+    if len(params['time']) == 0:
+        params['time'] = ["Morning", "Afternoon", "Evening"]
+
+    cost_geo_when = {
         'bool': {
             'must': [{
                 'geo_distance': {
@@ -98,7 +103,12 @@ def event_search():
                         'gte': -1, 'lte': params['cost']
                     }
                 }
-             }]
+             },
+                {'terms': {
+                    'when.keyword': []
+                }
+             }
+            ]
         }
     }
 
@@ -106,7 +116,7 @@ def event_search():
         'from': 0, 'size': 10000,
         'query': {
             'constant_score': {
-                'filter': cost_geo_query
+                'filter': cost_geo_when
             }
         }
     }
@@ -116,21 +126,27 @@ def event_search():
         'query': {
             'bool': {
                 'must': {
-                    'multi_match': {'query': "",
-                                    'analyzer': 'event_english',
-                                    'fields': ['name', 'tags'],
-                                    'type': 'best_fields',
-                                    'minimum_should_match': '85%',
-                                    'fuzziness': 'AUTO'
-                                }
+                    'multi_match': {
+                        'query': "",
+                        'analyzer': 'event_english',
+                        'fields': ['name', 'tags'],
+                        'type': 'best_fields',
+                        'minimum_should_match': '85%',
+                        'fuzziness': 'AUTO'
+                    }
                 },
-                'filter': cost_geo_query
+                'filter': cost_geo_when
             }
         }
     }
 
+    # add user selected times to the query
+    for time in params['time']:
+        cost_geo_when['bool']['must'][2]['terms']['when.keyword'].append(time)
+
     if 'Any' in params['tags']:
         body = all_events_query
+    # concatenate tags into a string to use full-text search
     elif params['tags']:
         tag_string = ""
         for tag in params['tags']:

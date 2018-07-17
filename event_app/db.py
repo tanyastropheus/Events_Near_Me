@@ -77,6 +77,7 @@ class DB():
                 },
                 "tags" : {"type" : "text", "analyzer": "event_english"},
                 "time" : {"type" : "keyword"}, # REVISIT
+                "when" : {"type" : "keyword"},
                 "image_url": {"type": "keyword"},
                 "description": {"type" : "text", "analyzer": "event_english"},
                 "venue": {"type": "keyword"}

@@ -1,9 +1,7 @@
 #!/usr/bin/python3
 '''scraping event details from sfstation.com'''
 
-import requests
-import re
-import sys
+import requests, re, sys
 from event_app.db import DB
 from bs4 import BeautifulSoup
 from elasticsearch import Elasticsearch
@@ -22,6 +20,7 @@ while True:
     # grab all event names and links on the page
     event_names = [name.text for name in soup.find_all('a', class_='url summary')]
     event_links = [link.get('href') for link in soup.find_all('a', class_='url summary')]
+    print("event_links:", event_links)
 
     for i in range(len(event_names)):
         event = {
@@ -34,8 +33,8 @@ while True:
         for i in range(len(event_words)):
             event['suggest'].append(' '.join(event_words[i:]))
 
-        print(event['suggest'])
         event['link'] = url.format(event_links[i])
+        print("event link:", event['link'])
 
         # following event link to get additional event info
         event_url = event['link']
@@ -65,6 +64,24 @@ while True:
         if event_soup.find('dt', text=re.compile(r'Time')):
             time= event_soup.find('dt', text=re.compile(r'Time')).find_next('dd').text
             event['time'] = time
+            am_pm = re.search('[a-zA-Z]+', time)  # match first alphabet letter
+            hour = re.match('[\d]+', time)  # match first number before ':'
+
+            # set when event happens based on the start time and start am/pm
+            try:
+                if am_pm.group(0).lower()[0] == 'a':
+                    event['when'] = ["Morning"]
+                elif am_pm.group(0).lower()[0] == 'p':
+                    if int(hour.group(0)) < 6 or int(hour.group(0)) == 12:
+                        event['when'] = ["Afternoon"]
+                    else:
+                        event['when'] = ["Evening"]
+
+            except AttributeError:  # when there is no match
+                print("missing info on event time")
+                # assign all hours of the day to display events for all queries
+                event['when'] = ["Morning", "Afternoon", "Evning"]
+
         if event_soup.find('dt', text=re.compile(r'Cost')):
             if event_soup.find('dd', class_='free'):
                 event['cost'] = 0  # for later price range query comparision
@@ -93,7 +110,6 @@ while True:
     print("last one:", soup.select('div#listingPagination > a')[-1])
 
     if soup.select('div#listingPagination > a')[-1].get_text() == 'Next »':
-        print("inside")
         next_page = url.format(soup.select('div#listingPagination > a')[-1].get('href'))
         print("next page url:", next_page)
         page = requests.get(next_page)
