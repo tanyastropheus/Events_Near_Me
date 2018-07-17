@@ -45,8 +45,10 @@ $(document).ready(function () {
 	success: function(data) {
 	  event = data.hits.hits
 	  console.log("auto", event)
+	  loc = {'lat': event[0]._source.location.lat, 'lng': event[0]._source.location.lon}
 	  deleteMarkers();  // remove existing markers
 	  addMarkers(event);  // populate page with new event markers
+	  map.panTo(loc);
 	}
       });
     }
