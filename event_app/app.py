@@ -105,7 +105,7 @@ def event_search():
                 }
              },
                 {'terms': {
-                    'when.keyword': []
+                    'when': []
                 }
              }
             ]
@@ -142,7 +142,7 @@ def event_search():
 
     # add user selected times to the query
     for time in params['time']:
-        cost_geo_when['bool']['must'][2]['terms']['when.keyword'].append(time)
+        cost_geo_when['bool']['must'][2]['terms']['when'].append(time)
 
     if 'Any' in params['tags']:
         body = all_events_query
