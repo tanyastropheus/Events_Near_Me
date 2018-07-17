@@ -20,7 +20,8 @@ while True:
     # grab all event names and links on the page
     event_names = [name.text for name in soup.find_all('a', class_='url summary')]
     event_links = [link.get('href') for link in soup.find_all('a', class_='url summary')]
-    print("event_links:", event_links)
+    print("event_names:", event_names, len(event_names))
+    print("event_links:", event_links, len(event_links))
 
     for i in range(len(event_names)):
         event = {
@@ -30,11 +31,10 @@ while True:
 
         # indexing event name for the elasticsearch completion suggester
         event_words = event_names[i].split()
-        for i in range(len(event_words)):
-            event['suggest'].append(' '.join(event_words[i:]))
+        for j in range(len(event_words)):
+            event['suggest'].append(' '.join(event_words[j:]))
 
         event['link'] = url.format(event_links[i])
-        print("event link:", event['link'])
 
         # following event link to get additional event info
         event_url = event['link']
