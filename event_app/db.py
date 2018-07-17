@@ -72,7 +72,7 @@ class DB():
                     "fields": {
                         "completion": {
                             "type": "completion"
-                            }
+                        }
                     }
                 },
                 "tags" : {"type" : "text", "analyzer": "event_english"},
