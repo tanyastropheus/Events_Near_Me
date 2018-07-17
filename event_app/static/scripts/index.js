@@ -15,6 +15,13 @@ let markers = [];
 let map;
 
 $(document).ready(function () {
+  let message =
+    "Welcome! \n\nI buit this webapp to practice full-stack web development. \
+The date button is still work in progress, but everything else works. \
+The displayed events are demo data only. \n\nThanks and Enjoy!"
+
+  alert(message);
+
   // dropdown menu display upon clicking on Event Keywords form area
   $('.event-keywords form').on('click', function () {
     $('.dropdown_tags').show();
