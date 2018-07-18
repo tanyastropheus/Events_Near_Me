@@ -83,7 +83,7 @@ ul.dropdown_tags li {
     display: flex;
     padding-left: 30px;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 5px;
     margin-bottom: 5px;
 }
 
@@ -184,7 +184,7 @@ hr {
 }
 
 #map {
-    height: 600px;
+    height: 500px;
     width: 100%;
     padding: 0;
     margin-top: 25px;
