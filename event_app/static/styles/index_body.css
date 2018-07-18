@@ -183,14 +183,9 @@ hr {
     background: #999;
 }
 
-.mapwrap {
-    height: 765px;
+#map {
+    height: 600px;
     width: 100%;
     padding: 0;
     margin-top: 25px;
-}
-
-#map {
-    height: 100%;
-    width: 100%;
 }

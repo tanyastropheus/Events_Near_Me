@@ -1,0 +1,20 @@
+.credits {
+    display: flex;
+    font-family: 'Catamaran';
+    font-size: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+
+#linkedin img {
+    height: 35px;
+    width: 35px;
+    margin: 0 20px;
+}
+
+#twitter img {
+    height: 40px;
+    width: 40px;
+    margin: 0 20px;
+}
