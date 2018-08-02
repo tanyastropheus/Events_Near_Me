@@ -1,11 +1,11 @@
 # Events Near Me
 
-A web application that lets the user search events by keywords and filter by \
-distance, cost, and time. The results are display on Google Map for visualization.
+A web application that lets the user search events by keywords and filter by distance, cost, and time. The results are display on Google Map for visualization.
 
-![alt text](https://i.imgur.com/WiNMuPF.png)
+![alt text](https://i.imgur.com/BmU6dzT.png)
 
 ## Getting Started
+This is a test
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
