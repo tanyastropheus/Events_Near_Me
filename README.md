@@ -1,6 +1,8 @@
 # Events Near Me
 
-A web application that lets the user search events by keywords and filter by distance, cost, and time. The results are display on Google Map for visualization.
+A web application that lets the user search events by keywords or category, and filter by distance, cost, and time. 
+
+Demo site: <eventsnearme.fun>  (*Currently contains only events in the Bay Area)
 
 ![alt text](https://i.imgur.com/BmU6dzT.png)
 
