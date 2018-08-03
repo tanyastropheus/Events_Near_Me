@@ -2,14 +2,14 @@
 
 A web application that lets the user search events by keywords or category, and filter by distance, cost, and time. 
 
-Demo site: <http://eventsnearme.fun>
-Currently contains *only events in the Bay Area*
+Demo site: <http://eventsnearme.fun>\
+Currently contains **only events in the Bay Area**
 
 ![alt text](https://i.imgur.com/BmU6dzT.png)
 
 ## Getting Started
 ### Architecture
-![alt text] (https://i.imgur.com/0emsL7e.png)
+![alt text](https://i.imgur.com/0emsL7e.png)
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
