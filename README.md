@@ -10,7 +10,7 @@ A web application that lets the user search events by keywords or category, and 
 
 ## Getting Started
 ### Architecture
-![alt text](https://i.imgur.com/KLXvcE8.png)
+![alt text](https://i.imgur.com/9DYHYLr.png)
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
