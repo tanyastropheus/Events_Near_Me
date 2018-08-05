@@ -38,7 +38,7 @@ When checking event categories (*OR*: returns events that meet at least one cate
 * [Flask](http://flask.pocoo.org/) - Web Framework
 
 ### Architecture
-*To be implemented: Obtaining event data from EventBrite
+* *To be implemented*: Obtaining event data from EventBrite
 ![alt text](https://i.imgur.com/awzPV2w.png)
 
 ## Getting Started
