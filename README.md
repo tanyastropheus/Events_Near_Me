@@ -22,9 +22,9 @@ A web application that lets the user search events of the day by keywords or cat
 - [Acknowledgements](#acknowledgements)
 
 ## Features
-* Full text search functionality when entering event keywords (AND: returns events that meet all keywords criteria)
-* Exact search (terms search) when checking event categories (OR: returns events that meet at least one category)
-* Search-as-you-type functionality when entering event keywords (returns events that contain the keyword anywhere in the title)
+* **Full text search**: when entering event keywords (AND: returns events that meet all keywords criteria)
+* **Search-as-you-type**: when entering event keywords (returns events that contain the keyword anywhere in the title)
+* **Exact search** when checking event categories (OR: returns events that meet at least one category)
 
 ## Built With
 
