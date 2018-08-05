@@ -129,13 +129,9 @@ Add additional notes about how to deploy this on a live system
 
 **Tanya Kryukova***
 
-![alt text](https://raw.githubusercontent.com/tanyastropheus/Events_Near_Me/master/event_app/static/images/linkedin_icon.png): ![alt text](https://www.linkedin.com/in/tanya-kryukova)
+LinkedIn: ![alt text](https://www.linkedin.com/in/tanya-kryukova)
 
-![alt text](https://raw.githubusercontent.com/tanyastropheus/Events_Near_Me/master/event_app/static/images/twitter_icon.png): 
-![@tyastropheus](https://twitter.com/tyastropheus)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
+Twitter: ![@tyastropheus](https://twitter.com/tyastropheus)
 
 ## Acknowledgments
 
