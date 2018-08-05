@@ -2,9 +2,7 @@
 
 A web application that lets the user search events of the day by keywords or category, and filter by distance, cost, and time. 
 
-**Demo site**: <http://eventsnearme.fun>
-
-*Currently contains **_only events in the Bay Area_**
+**Demo site**: <http://eventsnearme.fun>     *Currently contains **_only events in the Bay Area_**
 
 ![alt text](https://i.imgur.com/BmU6dzT.png)
 
@@ -51,10 +49,10 @@ git clone https://github.com/tanyastropheus/Events_Near_Me.git
 ```
 
 2. Install required Python packages
+...We are using the low-level Python Elasticsearch Client to interface with Elasticsearch.  Here is the [documentation](https://elasticsearch-py.readthedocs.io/en/master/) and [source code](https://elasticsearch-py.readthedocs.io/en/master/).
 ```
 pip3 install -r /Events_Near_Me/requirements.txt
 ```
-We are using the low-level Python Elasticsearch Client to interface with Elasticsearch.  Here is the [documentation](https://elasticsearch-py.readthedocs.io/en/master/) and [source code](https://elasticsearch-py.readthedocs.io/en/master/).
 
 3. Create a *local_setting.py* file that handles the Flask debugging setting in ```Events_Near_Me/event_app/``` directory.  It will be set to ```debug = True``` in development, and ```debug = False``` in production.  Below is an example:
 
