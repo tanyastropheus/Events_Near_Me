@@ -110,13 +110,13 @@ One may also load event data from a file instead of obtaining live events from r
 
    Set environmental variable ```DELETE='true'```:
    ```
-   PYTHONPATH=`pwd` INDEX='test_index' DOCTYPE='test_doc' DELETE='true'  python3 -m event_app.app
+   PYTHONPATH=`pwd` INDEX='example_test_index' DOCTYPE='example_test_doc' DELETE='true'  python3 -m event_app.app
    ```
 
    Or use the Elasticsearch API:
 
    ```
-   curl -X DELETE 'localhost:9200/test_index'
+   curl -X DELETE 'localhost:9200/example_test_index'
    ```
 
 ## Running the tests
