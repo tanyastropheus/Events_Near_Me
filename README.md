@@ -14,8 +14,8 @@ A web application that lets the user search events by keywords or category, and 
 
 ### Prerequisites
 
-..* Ubuntu 14.04
-..* Elasticsearch version 6.2.0.  Follow this [guide](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-ubuntu-14-04) for installation and configuration
+* Ubuntu 14.04
+* Elasticsearch version 6.2.0.  Follow this [guide](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-ubuntu-14-04) for installation and configuration
 
 ```
 Give examples
