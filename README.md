@@ -49,6 +49,8 @@ debug = False
 
 ### Usage
 
+#### Getting Live Event Data
+
 1. Start the Elasticsearch Server:
 ```
 sudo service elasticsearch start
@@ -71,8 +73,8 @@ PYTHONPATH=`pwd` python3 -m event_app.app
 python3 -m event_app.app
 ```
 
-
-One may also load event data from a file instead of obtaining live events from running the web scraper.  The ```tests/test_data``` directory provides sample test data sets.  To do so, follow the steps below:
+#### Load Event Data from File
+One may also load event data from a file instead of obtaining live events from running the web scraper.  The ```tests/test_data``` directory provides sample test data sets.  To do so, replace **Step 2** above with the follow the steps:
 
 1.  Create the index ```test_index``` with the doct_type ```test_doc``` to store file data and specify the file ```tests/test_data/test_data.txt``` where data is to be loaded.  Have Flask serve the data from file for the web application:
 
@@ -127,7 +129,7 @@ Add additional notes about how to deploy this on a live system
 
 ## Author
 
-**Tanya Kryukova** - [LinkedIn](https://www.linkedin.com/in/tanya-kryukova)/[Twitter](https://twitter.com/tyastropheus)
+**Tanya Kryukova** - [LinkedIn](https://www.linkedin.com/in/tanya-kryukova) / [Twitter](https://twitter.com/tyastropheus)
 
 ## Acknowledgments
 
