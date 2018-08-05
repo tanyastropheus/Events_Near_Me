@@ -57,7 +57,7 @@ git clone https://github.com/tanyastropheus/Events_Near_Me.git
 
 2. Install required Python packages
 
-...We are using the low-level Python Elasticsearch Client to interface with Elasticsearch.  Here is the [documentation](https://elasticsearch-py.readthedocs.io/en/master/) and [source code](https://elasticsearch-py.readthedocs.io/en/master/).
+   We are using the low-level Python Elasticsearch Client to interface with Elasticsearch.  Here is the [documentation](https://elasticsearch-py.readthedocs.io/en/master/) and [source code](https://elasticsearch-py.readthedocs.io/en/master/).
 ```
 pip3 install -r /Events_Near_Me/requirements.txt
 ```
@@ -109,12 +109,12 @@ PYTHONPATH=`pwd` INDEX='test_index' DOCTYPE='test_doc' DELETE='false' FILE='test
 
 2. To delete the test index:
 
-⋅⋅⋅set environmental variable ```DELETE='false'```:
+   Set environmental variable ```DELETE='false'```:
 ```
 PYTHONPATH=`pwd` INDEX='test_index' DOCTYPE='test_doc' DELETE='false'  python3 -m event_app.app
 ```
 
-⋅⋅⋅or use the Elasticsearch API:
+   Or use the Elasticsearch API:
 
 ```
 curl -X DELETE 'localhost:9200/test_index'
