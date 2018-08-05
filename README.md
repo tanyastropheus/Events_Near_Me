@@ -8,6 +8,18 @@ A web application that lets the user search events of the day by keywords or cat
 
 ![alt text](https://i.imgur.com/BmU6dzT.png)
 
+## Table of Contents
+
+- [Built With](#builtwith)
+- [Getting Started](#gettingstarted)
+- [Usage](#usage)
+- [Running the tests](#runningthetests)
+- [Known Bugs](#knownbugs)
+- [Future Development](#futuredevelopment)
+- [Arthor](#arthor)
+- [Acknowledgements](#acknowledgements)
+
+
 ## Built With
 
 * [beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) - Web Scraping Tool
