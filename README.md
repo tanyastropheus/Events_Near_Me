@@ -102,7 +102,6 @@ When checking event categories (*OR*: returns events that meet at least one cate
 One may also load event data from a file instead of obtaining live events from running the web scraper.  The ```tests/test_data``` directory provides sample test data sets.  To do so, replace **Step 2** above with the follow the steps:
 
 1.  Create the index ```test_index``` with the doct_type ```test_doc``` to store file data and specify the file ```tests/test_data/test_data.txt``` where data is to be loaded.  Have Flask serve the data from file for the web application:
-
    ```
    PYTHONPATH=`pwd` INDEX='test_index' DOCTYPE='test_doc' DELETE='false' FILE='tests/test_data/test_data.txt' python3 -m event_app.app
    ```
@@ -125,7 +124,7 @@ One may also load event data from a file instead of obtaining live events from r
 The unit tests are focused on ensuring the proper data is returned in response to the user's event search criteria.
 
 | Test                                                  | Purpose                                                                                                      |
-|-------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------|
+|:------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------|
 | *test_tokenizer.py*, *test_filters.py*                | Ensure that the indexing strategies are properly implemented through customed field mapping in Elasticsearch |
 | *test_full_text_search.py*, *test_compound_search.py* | Check that queries are properly implemented and returns the correct results                                  |
 | *test_endpoint.py*                                    | Test that endpoint logic is correct                                                                          |
