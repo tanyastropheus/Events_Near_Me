@@ -27,6 +27,7 @@ A web application that lets the user search events of the day by keywords or cat
 * [Flask](http://flask.pocoo.org/) - Web Framework
 
 ### Architecture
+*To be implemented: Obtaining event data from EventBrite
 ![alt text](https://i.imgur.com/awzPV2w.png)
 
 ## Getting Started
