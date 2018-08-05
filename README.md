@@ -127,13 +127,7 @@ Add additional notes about how to deploy this on a live system
 
 ## Author
 
-**Tanya Kryukova**
-
-LinkedIn:
-<https://www.linkedin.com/in/tanya-kryukova>
-
-Twitter:
-![@tyastropheus](https://twitter.com/tyastropheus)
+**Tanya Kryukova** - ![LinkedIn](https://www.linkedin.com/in/tanya-kryukova)/![Twitter](https://twitter.com/tyastropheus)
 
 ## Acknowledgments
 
