@@ -93,7 +93,7 @@ class EventEndPoint(unittest.TestCase):
                             'fields': ['name', 'description', 'tags'],
                             'fuzziness': 'AUTO',
                             'query': '',
-                            'analyzer': 'english_synonym'
+                            'analyzer': 'event_english'
                         }
                     }
                 }
@@ -130,7 +130,7 @@ class EventEndPoint(unittest.TestCase):
         return response
 
 
-    @patch('event_app.app.DB.search')
+    @patch('event_app.app.db.search')
     def test_search_all(self, mock_DB_search):
         ''''Check that  "Any" event tag generates query for all events'''
         mock_DB_search.side_effect = EventEndPoint.DBsearch_side_effect
@@ -145,7 +145,7 @@ class EventEndPoint(unittest.TestCase):
                          {'Music': 'a', 'Family': 'b', 'Workshop': 'c'})
 
 
-    @patch('event_app.app.DB.search')
+    @patch('event_app.app.db.search')
     def test_event_tags(self, mock_DB_search):
         '''Check that selected event tags generate appropriate query'''
         mock_DB_search.side_effect = EventEndPoint.DBsearch_side_effect
@@ -159,7 +159,7 @@ class EventEndPoint(unittest.TestCase):
                          {'Music': 'Beetles Anniversary'})
 
 
-    @patch('event_app.app.DB.search')
+    @patch('event_app.app.db.search')
     def test_event_keywords(self, mock_DB_search):
         '''Check that event keywords generate appropriate query'''
         mock_DB_search.side_effect = EventEndPoint.DBsearch_side_effect
@@ -173,7 +173,7 @@ class EventEndPoint(unittest.TestCase):
                          {'Music': 'Beetles Anniversary'})
 
 
-    @patch('event_app.app.DB.search')
+    @patch('event_app.app.db.search')
     def test_cost(self, mock_DB_search):
         '''check that endpoint validates cost range input'''
         mock_DB_search.side_effect = EventEndPoint.DBsearch_side_effect
@@ -211,7 +211,7 @@ class EventEndPoint(unittest.TestCase):
                          {'Music': 'a', 'Family': 'b', 'Workshop': 'c'})
 
 
-    @patch('event_app.app.DB.search')
+    @patch('event_app.app.db.search')
     def test_radius(self, mock_DB_search):
         '''check that endpoint validates radius input'''
         mock_DB_search.side_effect = EventEndPoint.DBsearch_side_effect
