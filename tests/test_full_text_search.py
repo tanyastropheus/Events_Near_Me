@@ -5,7 +5,7 @@ from event_app.db import DB
 from pprint import pprint
 
 db = DB('test_fulltext_search', 'test_fulltextdoc')
-filename = 'test_data/test_data.txt'
+filename = 'tests/test_data/test_data.txt'
 
 
 class TestFullTextSearch(unittest.TestCase):
@@ -20,7 +20,7 @@ class TestFullTextSearch(unittest.TestCase):
             'multi_match': {
                 'query': "",
                 'type': 'best_fields',
-                'analyzer': 'english_synonym',
+                'analyzer': 'event_english',
                 'fields': ['name', 'description', 'tags'],
                 'fuzziness': 'AUTO'
             }
