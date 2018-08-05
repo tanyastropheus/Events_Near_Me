@@ -54,13 +54,14 @@ debug = False
 sudo service elasticsearch start
 ```
 
-2. Run the web scraper to get events data:
+2. Run the web scraper to get event data of the day:
 ```
 cd Events_Near_Me
 ./sf_station_scrape.py
 ```
 
 3. Start Flask application server.  To accommodate the spawning of child processes when debugger is set to True in development, we need to specify the ````PYTHONPATH```:
+
 * In development:
 ```
 PYTHONPATH=`pwd` python3 -m event_app.app
@@ -70,23 +71,39 @@ PYTHONPATH=`pwd` python3 -m event_app.app
 python3 -m event_app.app
 ```
 
+One may also load event data from a file instead of obtaining live events from running the web scraper.  The ```tests/test_data``` directory provides sample test data sets.  To do so, follow the steps below:
+
+1.  Create the index ```test_index``` with the doct_type ```test_doc``` to store file data and specify the file ```tests/test_data/test_data.txt``` where data is to be loaded.  Have Flask serve the data from file for the web application:
+
+```
+PYTHONPATH=`pwd` INDEX='test_index' DOCTYPE='test_doc' DELETE='false' FILE='tests/test_data/test_data.txt' python3 -m event_app.app
+```
+
+2. To delete the test index:
+
+```
+PYTHONPATH=`pwd` INDEX='test_index' DOCTYPE='test_doc' DELETE='false'  python3 -m event_app.app
+```
+or use the Elasticsearch API:
+
+```
+curl -X DELETE 'localhost:9200/test_index'
+```
+
 ## Running the tests
 
 The unit tests are focused on ensuring the proper data is returned in response to the user's event search criteria.
 
 | Test                                                  | Purpose                                                                                                      |
-| ------------------------------------------------------|:------------------------------------------------------------------------------------------------------------:|
+| ------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------|
 | *test_tokenizer.py*, *test_filters.py*                | Ensure that the indexing strategies are properly implemented through customed field mapping in Elasticsearch |
-| *test_full_text_search.py*, *test_compound_search.py* | Check that queryes are properly implemented and returns the correct results                                  |
+| *test_full_text_search.py*, *test_compound_search.py* | Check that queries are properly implemented and returns the correct results                                  |
 | *test_endpoint.py*                                    | Test that endpoint logic is correct                                                                          |
 
-
-### Break down into end to end tests
-
-Explain what these tests test and why
+Example:
 
 ```
-Give an example
+python3 -m unittest test/test_tokenizer.py
 ```
 
 ### And coding style tests
