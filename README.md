@@ -127,15 +127,10 @@ Add additional notes about how to deploy this on a live system
 
 ## Author
 
-**![Tanya Kryukova](https://www.linkedin.com/in/tanya-kryukova)**
-
-**Twitter**: ![@tyastropheus](https://twitter.com/tyastropheus)
+**![Tanya Kryukova](https://www.linkedin.com/in/tanya-kryukova)** - ![@tyastropheus](https://twitter.com/tyastropheus)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 
