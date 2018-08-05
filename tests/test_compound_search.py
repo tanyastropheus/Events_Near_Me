@@ -5,7 +5,7 @@ from event_app.db import DB
 from pprint import pprint
 
 db = DB('test_compound_search', 'test_compound_doc')
-filename = 'test_data/test_data.txt'
+filename = 'tests/test_data/test_data.txt'
 
 
 class TestCompoundSearch(unittest.TestCase):
@@ -146,7 +146,7 @@ class TestCompoundSearch(unittest.TestCase):
                 'bool': {
                     'must': {
                         'multi_match': {'query': 'music dance',
-                                        'analyzer': 'english_synonym',
+                                        'analyzer': 'event_english',
                                         'fields': ['name', 'description', 'tags'],
                                         'fuzziness': 'AUTO'
                                     }
