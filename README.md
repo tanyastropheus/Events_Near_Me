@@ -109,10 +109,12 @@ PYTHONPATH=`pwd` INDEX='test_index' DOCTYPE='test_doc' DELETE='false' FILE='test
 
 2. To delete the test index:
 
+...set environmental variable ```DELETE='false'```:
 ```
 PYTHONPATH=`pwd` INDEX='test_index' DOCTYPE='test_doc' DELETE='false'  python3 -m event_app.app
 ```
-or use the Elasticsearch API:
+
+...or use the Elasticsearch API:
 
 ```
 curl -X DELETE 'localhost:9200/test_index'
