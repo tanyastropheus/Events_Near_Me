@@ -1,6 +1,6 @@
 # Events Near Me
 
-A web application that lets the user search events by keywords or category, and filter by distance, cost, and time. 
+A web application that lets the user search events of the day by keywords or category, and filter by distance, cost, and time. 
 
 **Demo site**: <http://eventsnearme.fun>
 
@@ -11,7 +11,7 @@ A web application that lets the user search events by keywords or category, and 
 ## Built With
 
 * [beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) - Web Scraping Tool
-* [Elasticsearch](https://elasticsearch-py.readthedocs.io/en/master/) - Document store and Search Engine
+* [Elasticsearch](https://www.elastic.co/) - Document store and Search Engine
 * [Flask](http://flask.pocoo.org/) - Web Framework
 
 ### Architecture
@@ -22,7 +22,7 @@ A web application that lets the user search events by keywords or category, and 
 ### Prerequisites
 
 * Python 3
-* Elasticsearch version 6.2.0.  Follow this [guide](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-ubuntu-14-04) for installation and configuration
+* Elasticsearch version 6.2.0.  Follow [this guide](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-ubuntu-14-04) for installation and configuration
 
 ### Installing
 
@@ -49,10 +49,39 @@ debug = False
 
 ### Usage
 
+1. Start the Elasticsearch Server:
+```
+sudo service elasticsearch start
+```
+
+2. Run the web scraper to get events data:
+```
+cd Events_Near_Me
+./sf_station_scrape.py
+```
+
+3. Start Flask application server.  To accommodate the spawning of child processes when debugger is set to True in development, we need to specify the ````PYTHONPATH```:
+* In development:
+```
+PYTHONPATH=`pwd` python3 -m event_app.app
+```
+* In production:
+```
+python3 -m event_app.app
+```
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+The unit tests are focused on ensuring the proper data is returned in response to the user's event search criteria.
+
+| Test                      | Purpose                                                     |
+| --------------------------|:-----------------------------------------------------------:|
+| *test_tokenizer.py*       | Ensure that the indexing strategies are properly            |
+| *test_filters.py*         | implemented through customed field mapping in Elasticsearch |
+| *test_full_text_search.py | Check that queryes are properly implemented and returns the |
+| *test_compound_search.py  | correct results                                             |
+| *test_endpoint.py*        | Test that endpoint logic is correct                         |
+
 
 ### Break down into end to end tests
 
@@ -69,6 +98,10 @@ Explain what these tests test and why
 ```
 Give an example
 ```
+
+## Known Bugs
+
+## Future Development
 
 ## Deployment
 
