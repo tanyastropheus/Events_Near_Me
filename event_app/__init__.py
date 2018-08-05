@@ -18,8 +18,8 @@ elif getenv('DELETE') == 'true':
 # option to load data from file
 if getenv('FILE'):
     filename = getenv('FILE')
-    events = load_data_from_file(filename)
-    store_docs(events)
+    events = db.load_data_from_file(filename)
+    db.store_docs(events)
 
     # allow time for Elasticsearch server to store all data
     sleep(3)
