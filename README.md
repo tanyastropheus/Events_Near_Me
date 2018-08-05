@@ -74,13 +74,11 @@ python3 -m event_app.app
 
 The unit tests are focused on ensuring the proper data is returned in response to the user's event search criteria.
 
-| Test                      | Purpose                                                     |
-| --------------------------|:-----------------------------------------------------------:|
-| *test_tokenizer.py*       | Ensure that the indexing strategies are properly            |
-| *test_filters.py*         | implemented through customed field mapping in Elasticsearch |
-| *test_full_text_search.py | Check that queryes are properly implemented and returns the |
-| *test_compound_search.py  | correct results                                             |
-| *test_endpoint.py*        | Test that endpoint logic is correct                         |
+| Test                                                  | Purpose                                                                                                      |
+| ------------------------------------------------------|:------------------------------------------------------------------------------------------------------------:|
+| *test_tokenizer.py*, *test_filters.py*                | Ensure that the indexing strategies are properly implemented through customed field mapping in Elasticsearch |
+| *test_full_text_search.py*, *test_compound_search.py* | Check that queryes are properly implemented and returns the correct results                                  |
+| *test_endpoint.py*                                    | Test that endpoint logic is correct                                                                          |
 
 
 ### Break down into end to end tests
