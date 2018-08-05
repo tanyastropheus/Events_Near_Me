@@ -10,12 +10,12 @@ A web application that lets the user search events of the day by keywords or cat
 
 ## Table of Contents
 
-- [Built With](#built with)
-- [Getting Started](#getting started)
+- [Built With](#built-with)
+- [Getting Started](#getting-started)
 - [Usage](#usage)
-- [Running the tests](#running the tests)
+- [Running the tests](#running-the-tests)
 - [Known Bugs](#knownbugs)
-- [Future Development](#future development)
+- [Future Development](#future-development)
 - [Author](#author)
 - [Acknowledgements](#acknowledgements)
 
