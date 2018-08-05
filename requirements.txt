@@ -1,4 +1,4 @@
 Flask==0.12.2
-gunicorn
+gunicorn==19.9.0
 beautifulsoup4
 elasticsearch
