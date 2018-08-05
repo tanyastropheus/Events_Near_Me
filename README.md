@@ -151,7 +151,7 @@ Add additional notes about how to deploy this on a live system
 * get data from more event sites (e.g. EventBrite)
 * add calendar feature so user can specify event date
 * make API available for public
-* add SSL certificate
+* add SSL certificate & Monitoring
 
 ## Author
 
