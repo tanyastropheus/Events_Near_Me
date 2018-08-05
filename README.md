@@ -12,11 +12,10 @@ A web application that lets the user search events by keywords or category, and 
 ### Architecture
 ![alt text](https://i.imgur.com/awzPV2w.png)
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
 ### Prerequisites
 
-What things you need to install the software and how to install them
+..* Ubuntu 14.04
+..* Elasticsearch version 6.2.0.  Follow this [guide](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-ubuntu-14-04) for installation and configuration
 
 ```
 Give examples
