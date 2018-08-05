@@ -14,6 +14,7 @@ A web application that lets the user search events of the day by keywords or cat
 - [Getting Started](#getting-started)
 - [Usage](#usage)
 - [Running the tests](#running-the-tests)
+- [Deployment](#deployment)
 - [Known Bugs](#knownbugs)
 - [Future Development](#future-development)
 - [Author](#author)
@@ -122,6 +123,10 @@ The unit tests are focused on ensuring the proper data is returned in response t
 python3 -m unittest tests/test_tokenizer.py
 ```
 
+## Deployment
+
+Add additional notes about how to deploy this on a live system
+
 ## Known Bugs
 
 * some tests don't pass (specify those test files)
@@ -135,10 +140,6 @@ python3 -m unittest tests/test_tokenizer.py
 * add calendar feature so user can specify event date
 * make API available for public
 * add SSL certificate
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Author
 
