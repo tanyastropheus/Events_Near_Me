@@ -8,14 +8,21 @@ A web application that lets the user search events by keywords or category, and 
 
 ![alt text](https://i.imgur.com/BmU6dzT.png)
 
-## Getting Started
+## Built With
+
+* [beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) - Web Scraping Tool
+* [Elasticsearch](https://elasticsearch-py.readthedocs.io/en/master/) - Document store and Search Engine
+* [Flask](http://flask.pocoo.org/) - Web Framework
+
 ### Architecture
 ![alt text](https://i.imgur.com/awzPV2w.png)
 
+## Getting Started
+
 ### Prerequisites
 
-* Python 3. 4. 3
-* Elasticsearch version 6. 2. 0.  Follow this [guide](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-ubuntu-14-04) for installation and configuration
+* Python 3
+* Elasticsearch version 6.2.0.  Follow this [guide](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-ubuntu-14-04) for installation and configuration
 
 ### Installing
 
@@ -67,11 +74,6 @@ Give an example
 
 Add additional notes about how to deploy this on a live system
 
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
 
 ## Contributing
 
