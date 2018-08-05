@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import requests, urllib
+import requests, urllib, json
 from elasticsearch import Elasticsearch
 from pprint import pprint  # REVISIT: for debugging purpose only.
 
@@ -118,10 +118,40 @@ class DB():
         if self.es.indices.exists(index=self.index):
             self.es.indices.delete(index=self.index)
 
+    def load_data_from_file(self, filename):
+        '''read data from test data file.
+
+        Returns:
+            List of event dicts.
+        '''
+        text = ""
+        with open(filename) as f:
+            for line in f:
+                li = line.strip()
+                if not li.startswith('#'):
+                    text += line
+        events = json.loads(text, strict=False)
+        return events
+
     def store_doc(self, doc_id, data):
         '''store event data in designated index and doc_type'''
         self.es.index(index=self.index, doc_type=self.doc_type,
                       id=doc_id, body=data)
+
+    def store_docs(self, events):
+        '''store event data in elasticsearch.
+
+        Args:
+            events(list): a list of event data in dictionary form
+                          e.g. [event1, event2...] where each event is a dict
+
+        Note: document id starts with 0
+        '''
+        i = 0
+        while i < len(events):
+            event = "event" + str(i + 1)
+            self.store_doc(i, events[i][event])
+            i += 1
 
     def search(self, query):
         '''search index with the given query for matching docs'''
