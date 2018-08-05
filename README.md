@@ -59,9 +59,9 @@ change Flask debug setting based on locality (development/production)
 debug = False
 ```
 
-### Usage
+## Usage
 
-#### Getting Live Event Data
+### Getting Live Event Data
 
 1. Start the Elasticsearch Server:
 ```
@@ -85,7 +85,7 @@ PYTHONPATH=`pwd` python3 -m event_app.app
 python3 -m event_app.app
 ```
 
-#### Load Event Data from File
+### Load Event Data from File
 One may also load event data from a file instead of obtaining live events from running the web scraper.  The ```tests/test_data``` directory provides sample test data sets.  To do so, replace **Step 2** above with the follow the steps:
 
 1.  Create the index ```test_index``` with the doct_type ```test_doc``` to store file data and specify the file ```tests/test_data/test_data.txt``` where data is to be loaded.  Have Flask serve the data from file for the web application:
