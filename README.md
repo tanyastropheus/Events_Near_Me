@@ -17,24 +17,18 @@ A web application that lets the user search events by keywords or category, and 
 * Ubuntu 14.04
 * Elasticsearch version 6.2.0.  Follow this [guide](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-ubuntu-14-04) for installation and configuration
 
-```
-Give examples
-```
-
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
+1. Clone the repository
 ```
-Give the example
+git clone https://github.com/tanyastropheus/Events_Near_Me.git
 ```
 
-And repeat
+2. Install required Python packages
 
+We are using the low-level Python Elasticsearch Client to interface with Elasticsearch.  Here is the [documentation](https://elasticsearch-py.readthedocs.io/en/master/) and [source code](https://elasticsearch-py.readthedocs.io/en/master/)
 ```
-until finished
+pip3 install -r /Events_Near_Me/requirements.txt
 ```
 
 End with an example of getting some data out of the system or using it for a little demo
