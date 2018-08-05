@@ -14,8 +14,8 @@ A web application that lets the user search events by keywords or category, and 
 
 ### Prerequisites
 
-* Ubuntu 14.04
-* Elasticsearch version 6.2.0.  Follow this [guide](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-ubuntu-14-04) for installation and configuration
+* Python 3. 4. 3
+* Elasticsearch version 6. 2. 0.  Follow this [guide](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-ubuntu-14-04) for installation and configuration
 
 ### Installing
 
@@ -25,13 +25,12 @@ git clone https://github.com/tanyastropheus/Events_Near_Me.git
 ```
 
 2. Install required Python packages
-
 ```
 pip3 install -r /Events_Near_Me/requirements.txt
 ```
 We are using the low-level Python Elasticsearch Client to interface with Elasticsearch.  Here is the [documentation](https://elasticsearch-py.readthedocs.io/en/master/) and [source code](https://elasticsearch-py.readthedocs.io/en/master/)
 
-3. Create a *local_setting.py* file that handles the Flask debugging setting in ```Events_Near_Me/event_app/``` directory.  It will be set to ```debug = True`` in production, and ```debug = False``` in production.  Below is an example:
+3. Create a *local_setting.py* file that handles the Flask debugging setting in ```Events_Near_Me/event_app/``` directory.  It will be set to ```debug = True``` in development, and ```debug = False``` in production.  Below is an example:
 
 ```
 #!/usr/bin/python3
@@ -41,7 +40,8 @@ change Flask debug setting based on locality (development/production)
 debug = False
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+### Usage
+
 
 ## Running the tests
 
