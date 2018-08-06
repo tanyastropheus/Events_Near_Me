@@ -19,7 +19,7 @@ A web application that lets the user search events of the day by keywords or cat
 - [Known Bugs](#knownbugs)
 - [Future Development](#future-development)
 - [Author](#author)
-- [Acknowledgements](#acknowledgements)
+
 
 ## Features
 * **Full text search**: 
@@ -81,7 +81,7 @@ with event categories (*OR*: returns events that meet at least one category)
    sudo service elasticsearch start
    ```
 
-2. Run the web scraper to get event data of the day:
+2. Run the web scraper to get event data of the day.  The events will be saved in the ```events_today``` index with ```info``` as the document type.
    ```
    cd Events_Near_Me
    ./sf_station_scrape.py
@@ -101,22 +101,22 @@ with event categories (*OR*: returns events that meet at least one category)
 ### Load Event Data from File
 One may also load event data from a file instead of obtaining live events from running the web scraper.  The ```tests/test_data``` directory provides sample test data sets.  To do so, replace **Step 2** above with the follow the steps:
 
-1.  Create the index ```test_index``` with the doct_type ```test_doc``` to store file data and specify the file ```tests/test_data/test_data.txt``` where data is to be loaded.  Have Flask serve the data from file for the web application:
+1.  Create the index ```example_test_index``` with a doc_type ```example_test_doc``` to store file data and specify the file ```tests/test_data/test_data.txt``` where data is to be loaded.  Have Flask serve the data from file for the web application:
    ```
-   PYTHONPATH=`pwd` INDEX='test_index' DOCTYPE='test_doc' DELETE='false' FILE='tests/test_data/test_data.txt' python3 -m event_app.app
+   PYTHONPATH=`pwd` INDEX='example_test_index' DOCTYPE='example_test_doc' FILE='tests/test_data/test_data.txt' python3 -m event_app.app
    ```
 
 2. To delete the test index:
 
-   Set environmental variable ```DELETE='false'```:
+   Set environmental variable ```DELETE='true'```:
    ```
-   PYTHONPATH=`pwd` INDEX='test_index' DOCTYPE='test_doc' DELETE='false'  python3 -m event_app.app
+   PYTHONPATH=`pwd` INDEX='example_test_index' DOCTYPE='example_test_doc' DELETE='true'  python3 -m event_app.app
    ```
 
    Or use the Elasticsearch API:
 
    ```
-   curl -X DELETE 'localhost:9200/test_index'
+   curl -X DELETE 'localhost:9200/example_test_index'
    ```
 
 ## Running the tests
@@ -137,28 +137,36 @@ python3 -m unittest tests/test_tokenizer.py
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+This project was deployed to a Ubuntu 14.04 server, with [Nginx](https://www.nginx.com) as the web server and [Gunicorn](http://gunicorn.org) as the Web Server Gateway Interface (WSGI) between Flask and Nginx.  The processes are managed by [Supervisor](http://supervisord.org/introduction.html). Here is a [nice reference guide](https://realpython.com/kickstarting-flask-on-ubuntu-setup-and-deployment/) that describes the deployment using these technologies.
 
 ## Known Bugs
 
-* some tests don't pass (specify those test files)
-* time selection button does not update when user unchecks the time slot
-* refine event category results
+1. Marker display does not get updated when checking/unchecking time slots of the day
+
+2. Selecting multiple event categories does not accurately display the events that meet one or more category criteria
+
+3. Code does not pass some test cases (*test_full_text_search.py*, *test_compound_search.py*, *test_endpoint.py*)
+
 
 ## Future Development
 
-* fix bugs (by....)
-* get data from more event sites (e.g. EventBrite)
-* add calendar feature so user can specify event date
-* make API available for public
-* add SSL certificate & Monitoring
+1. Fix marker display when time slot is checked/unchecked
+
+2. Implement terms search instead of full-text search for accurate event category (OR) results
+
+3. Update test cases to reflect the change in endpoint logic and implementation on time selection
+
+4. Aggregate more data from event sites (e.g. EventBrite, SF funcheap, ...etc)
+
+5. Add calendar feature that allows the user to search events on a given date
+
+6. Make event API available for the public
+
+7. Allow the user to submit events
+
+8. Add events for other regions
+
 
 ## Author
 
 **Tanya Kryukova** - [LinkedIn](https://www.linkedin.com/in/tanya-kryukova) / [Twitter](https://twitter.com/tyastropheus)
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
