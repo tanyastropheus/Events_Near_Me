@@ -81,7 +81,7 @@ with event categories (*OR*: returns events that meet at least one category)
    sudo service elasticsearch start
    ```
 
-2. Run the web scraper to get event data of the day:
+2. Run the web scraper to get event data of the day.  The events will be saved in the ```events_today``` index with ```info``` as the document type.
    ```
    cd Events_Near_Me
    ./sf_station_scrape.py
@@ -101,7 +101,7 @@ with event categories (*OR*: returns events that meet at least one category)
 ### Load Event Data from File
 One may also load event data from a file instead of obtaining live events from running the web scraper.  The ```tests/test_data``` directory provides sample test data sets.  To do so, replace **Step 2** above with the follow the steps:
 
-1.  Create the index ```example_test_index``` with the doct_type ```example_test_doc``` to store file data and specify the file ```tests/test_data/test_data.txt``` where data is to be loaded.  Have Flask serve the data from file for the web application:
+1.  Create the index ```example_test_index``` with a doc_type ```example_test_doc``` to store file data and specify the file ```tests/test_data/test_data.txt``` where data is to be loaded.  Have Flask serve the data from file for the web application:
    ```
    PYTHONPATH=`pwd` INDEX='example_test_index' DOCTYPE='example_test_doc' FILE='tests/test_data/test_data.txt' python3 -m event_app.app
    ```
@@ -137,7 +137,7 @@ python3 -m unittest tests/test_tokenizer.py
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+This project was deployed to a Ubuntu 14.04 server, with [Nginx](https://www.nginx.com) as the web server and [Gunicorn](http://gunicorn.org) as the Web Server Gateway Interface (WSGI) between Flask and Nginx.  The processes are managed by [Supervisor](http://supervisord.org/introduction.html). Here is a [nice reference guide](https://realpython.com/kickstarting-flask-on-ubuntu-setup-and-deployment/) that describes the deployment using these technologies.
 
 ## Known Bugs
 
