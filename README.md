@@ -19,7 +19,7 @@ A web application that lets the user search events of the day by keywords or cat
 - [Known Bugs](#knownbugs)
 - [Future Development](#future-development)
 - [Author](#author)
-- [Acknowledgements](#acknowledgements)
+
 
 ## Features
 * **Full text search**: 
