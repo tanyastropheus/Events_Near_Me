@@ -1,6 +1,6 @@
 # Events Near Me
 
-A web application that lets the user search events of the day by keywords or category, and filter by distance, cost, and time. 
+A web application that lets users search events of the day by keywords or category, and filter by distance, cost, and time. 
 
 **Demo site**: <http://eventsnearme.fun>
 
@@ -88,15 +88,9 @@ with event categories (*OR*: returns events that meet at least one category)
    ```
 
 3. Start Flask application server.  To accommodate the spawning of child processes when debugger is set to True in development, we need to specify the ```PYTHONPATH```:
-
-   * In development:
-      ```
-      PYTHONPATH=`pwd` python3 -m event_app.app
-      ```
-   * In production:
-      ```
-      python3 -m event_app.app
-      ```
+   ```
+   PYTHONPATH=`pwd` python3 -m event_app.app
+   ```
 
 ### Load Event Data from File
 One may also load event data from a file instead of obtaining live events from running the web scraper.  The ```tests/test_data``` directory provides sample test data sets.  To do so, replace **Step 2** above with the follow the steps:
