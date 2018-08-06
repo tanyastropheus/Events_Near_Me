@@ -10,10 +10,8 @@ index = getenv('INDEX')
 doc_type = getenv('DOCTYPE')
 db = DB(index, doc_type)
 
-if getenv('DELETE') == 'false':
-    db.create_index()
-elif getenv('DELETE') == 'true':
-    db.delete_index()
+# create index if it doesn't already exist
+db.create_index()
 
 # option to load data from file
 if getenv('FILE'):
@@ -33,3 +31,6 @@ if getenv('FILE'):
 
     # allow time for Elasticsearch server to store all data
     sleep(3)
+
+elif getenv('DELETE') == 'true':
+    db.delete_index()
